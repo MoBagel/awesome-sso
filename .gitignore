@@ -1,0 +1,13 @@
+__pycache__
+kompose
+data/
+*.pyc
+.idea
+*swp
+.env
+*.csv
+*.ipynb
+env
+src/docker-compose*
+dist
+.coverage
