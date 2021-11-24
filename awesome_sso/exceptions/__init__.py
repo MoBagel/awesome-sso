@@ -1,39 +1,75 @@
+from typing import Optional
+
+
 class HTTPException(Exception):
-    detail: str
+    detail: dict
     status_code: int
+    error_code: str
+
+    def __init__(self, status_code: int, message: str, error_code: Optional[str] = None, args: dict = {}):
+        self.status_code = status_code
+        self.detail = {
+            'message': message,
+            **args
+        }
+        self.error_code = error_code if error_code is not None else status_code
 
 
 class BadRequest(HTTPException):
-    def __init__(self, message):
-        self.detail = "Bad Request: %s" % message
-        self.status_code = 400
+    def __init__(self, message, error_code: Optional[str] = None, args: dict = {}):
+        super().__init__(
+            status_code=400,
+            message="Bad Request: %s" % message,
+            error_code=error_code,
+            args=args,
+        )
 
 
 class Unauthorized(HTTPException):
-    def __init__(self, message):
-        self.detail = "Unauthorized: %s" % message
-        self.status_code = 401
+    def __init__(self, message, error_code: Optional[str] = None, args: dict = {}):
+        super().__init__(
+            status_code=401,
+            message="Unauthorized: %s" % message,
+            error_code=error_code,
+            args=args,
+        )
 
 
 class NotFound(HTTPException):
-    def __init__(self, message):
-        self.detail = "Not Found: %s" % message
-        self.status_code = 403
+    def __init__(self, message, error_code: Optional[str] = None, args: dict = {}):
+        super().__init__(
+            status_code=403,
+            message="Not Found: %s" % message,
+            error_code=error_code,
+            args=args,
+        )
 
 
 class ResourceGone(HTTPException):
-    def __init__(self, message):
-        self.detail = "Resource Gone: %s" % message
-        self.status_code = 410
+    def __init__(self, message, error_code: Optional[str] = None, args: dict = {}):
+        super().__init__(
+            status_code=410,
+            message="Resource Gone: %s" % message,
+            error_code=error_code,
+            args=args,
+        )
 
 
 class UnprocessableEntity(HTTPException):
-    def __init__(self, message):
-        self.detail = "Unprocessable Entity: %s" % message
-        self.status_code = 422
+    def __init__(self, message, error_code: Optional[str] = None, args: dict = {}):
+        super().__init__(
+            status_code=422,
+            message="Unprocessable Entity: %s" % message,
+            error_code=error_code,
+            args=args,
+        )
 
 
 class InternalServerError(HTTPException):
-    def __init__(self, message):
-        self.detail = "Internal Server Error: %s" % message
-        self.status_code = 500
+    def __init__(self, message, error_code: Optional[str] = None, args: dict = {}):
+        super().__init__(
+            status_code=500,
+            message="Internal Server Error: %s" % message,
+            error_code=error_code,
+            args=args,
+        )
