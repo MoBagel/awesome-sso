@@ -22,17 +22,39 @@ classifiers = [
 ]
 include = [
   "README.md",
+  "LICENSE.txt",
 ]
 
 [tool.poetry.dependencies]
 python = "~=3.8"
+autoflake = "^1.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
 pytest-cov = "^3.0.0"
 flake8 = "^4.0.0"
+black = "^21.11b1"
+isort = "^5.10.1"
+mypy = "^0.910"
+poethepoet = "^0.11.0"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poe.env]
+ROOT = 'awesome_sso'
+
+[tool.poe.tasks]
+mypy = 'mypy $ROOT'
+flake8 = 'flake8 $ROOT --max-line-length 120'
+autoflake-check = 'autoflake $ROOT -r'
+autoflake = 'autoflake --in-place $ROOT -r'
+isort-check = 'isort $ROOT --diff'
+isort = 'isort $ROOT'
+black-check = 'black $ROOT --diff'
+black = 'black $ROOT'
+format-check = ['autoflake-check', 'isort-check', 'black-check']
+format = ['autoflake', 'isort', 'black']
+lint = ['mypy', 'flake8']
+test = 'pytest --cov=$ROOT tests/'

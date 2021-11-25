@@ -1,0 +1,24 @@
+name: pypi_upload
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: PyPI Upload
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+
+    steps:
+      - name: Build and publish to pypi
+        uses: JRubics/poetry-publish@v1.9
+        with:
+          python-version: ${{ matrix.python-version }}
+          poetry_version: "==1.1.11"
+          pypi_token: ${{ secrets.PYPI_TOKEN }}
+          build_format: "sdist"
+          ignore_dev_requirements: "yes"
