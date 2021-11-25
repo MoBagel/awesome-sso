@@ -32,10 +32,10 @@ jobs:
         run: poetry install
 
       - name: Run Lint
-        run: poe lint
+        run: poetry run poe lint
 
       - name: Run Test
-        run: poe test
+        run: poetry run poe test
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
