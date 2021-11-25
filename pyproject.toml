@@ -58,4 +58,4 @@ black = 'black $ROOT'
 format-check = ['autoflake-check', 'isort-check', 'black-check']
 format = ['autoflake', 'isort', 'black']
 lint = ['mypy', 'flake8']
-test = 'pytest --cov=$ROOT tests/'
+test = 'pytest --cov=$ROOT tests/  --cov-report term-missing'

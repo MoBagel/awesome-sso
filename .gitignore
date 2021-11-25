@@ -11,3 +11,4 @@ env
 src/docker-compose*
 dist
 .coverage
+coverage.xml
