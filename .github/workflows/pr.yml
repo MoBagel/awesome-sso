@@ -1,4 +1,4 @@
-name: ci
+name: pr
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8"]
         poetry-version: [1.1.11]
 
     steps:
@@ -32,7 +32,12 @@ jobs:
         run: poetry install
 
       - name: Run Lint
-        run: poe lint
+        run: poetry run poe lint
 
       - name: Run Test
-        run: poe test
+        run: poetry run poe test
+
+      - name: Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: poetry run coveralls

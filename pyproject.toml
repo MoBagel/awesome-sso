@@ -28,6 +28,7 @@ include = [
 [tool.poetry.dependencies]
 python = "~=3.8"
 autoflake = "^1.4"
+coveralls = "^3.3.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
@@ -57,4 +58,4 @@ black = 'black $ROOT'
 format-check = ['autoflake-check', 'isort-check', 'black-check']
 format = ['autoflake', 'isort', 'black']
 lint = ['mypy', 'flake8']
-test = 'pytest --cov=$ROOT tests/'
+test = 'pytest --cov=$ROOT tests/  --cov-report term-missing'
