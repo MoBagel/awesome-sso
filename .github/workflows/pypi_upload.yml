@@ -13,12 +13,27 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8"]
+        poetry-version: [1.1.11]
 
     steps:
-      - name: Build and publish to pypi
-        uses: JRubics/poetry-publish@v1.9
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
         with:
-          poetry_version: "==1.1.11"
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
-          build_format: "sdist"
-          ignore_dev_requirements: "yes"
+          python-version: ${{ matrix.python-version }}
+
+      - uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+
+      - name: Install dependencies
+        run: poetry build
+
+      - name: Build and publish package
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          rm -rf dist
+          poetry publish --build --username __token__ --password $PYPI_TOKEN
+
