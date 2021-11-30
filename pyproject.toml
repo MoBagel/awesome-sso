@@ -59,4 +59,4 @@ black = 'black $ROOT'
 format-check = ['autoflake-check', 'isort-check', 'black-check']
 format = ['autoflake', 'isort', 'black']
 lint = ['mypy', 'black-check']
-test = 'bash run_test.sh'
+test = 'pytest --cov=$ROOT --cov-report term-missing'

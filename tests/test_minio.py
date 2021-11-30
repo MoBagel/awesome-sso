@@ -1,12 +1,13 @@
 from awesome_sso.store.minio import MinioStore
 import tempfile
 import json
+import os
 
 
-ACCESS_KEY = 'minioadmin'
-SECRET_KEY = 'minioadmin'
+ACCESS_KEY = os.environ.get('MINIO_ACCESS_KEY')
+SECRET_KEY = os.environ.get('MINIO_SECRET_KEY')
 BUCKET = 'test'
-HOST = 'localhost:9000'
+HOST = os.environ.get('MINIO_ADDRESS')
 test_string = b'to grasp how wide and long and high and deep is the love of Christ'
 
 object_store = MinioStore(host=HOST, bucket=BUCKET, access_key=ACCESS_KEY, secret_key=SECRET_KEY)
@@ -15,9 +16,7 @@ object_store = MinioStore(host=HOST, bucket=BUCKET, access_key=ACCESS_KEY, secre
 def test_bucket_creation():
     buckets = object_store.client.list_buckets()
     assert 'test' in buckets
-    object_store.client.remove_bucket('test')
     #  make sure bucket creation work on first time as well as on second time
-    MinioStore(host=HOST, bucket=BUCKET, access_key=ACCESS_KEY, secret_key=SECRET_KEY)
     MinioStore(host=HOST, bucket=BUCKET, access_key=ACCESS_KEY, secret_key=SECRET_KEY)
     buckets = object_store.client.list_buckets()
     assert 'test' in buckets

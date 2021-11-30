@@ -8,7 +8,8 @@ function run_minio_server() {
 
     export MINIO_ACCESS_KEY=minio
     export MINIO_SECRET_KEY=minio123
-    tests/minio server /tmp/fs --address 0.0.0.0:9002 >tests/minio.log 2>&1 &
+    export MINIO_ADDRESS=0.0.0.0:9002
+    tests/minio server /tmp/fs --address $MINIO_ADDRESS >tests/minio.log 2>&1 &
 }
 
 if [ -z ${SERVER_ENDPOINT+x} ]; then
@@ -17,7 +18,7 @@ if [ -z ${SERVER_ENDPOINT+x} ]; then
     trap 'kill -9 ${MINIO_PID} 2>/dev/null' INT
 fi
 
-pytest --cov=$ROOT tests/  --cov-report term-missing
+pytest --cov=awesome_sso tests/ --cov-report term-missing
 if [ -n "$MINIO_PID" ]; then
     kill -9 "$MINIO_PID" 2>/dev/null
 fi

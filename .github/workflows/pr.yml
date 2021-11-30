@@ -35,7 +35,14 @@ jobs:
         run: poetry run poe lint
 
       - name: Run Test
-        run: poetry run poe test
+        run: |
+          wget --quiet --output-document tests/minio https://dl.min.io/server/minio/release/linux-amd64/minio
+          chmod +x tests/minio
+          export MINIO_ACCESS_KEY=minio
+          export MINIO_SECRET_KEY=minio123
+          export MINIO_ADDRESS=0.0.0.0:9000
+          tests/minio server /tmp/fs --address $MINIO_ADDRESS >tests/minio.log 2>&1 &
+          poetry run poe test
 
       - name: Coveralls
         env:
