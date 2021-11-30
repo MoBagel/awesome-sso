@@ -3,7 +3,7 @@ import io
 import json
 from logging import Logger
 from os import path
-from typing import Optional, IO
+from typing import IO, Optional
 
 from minio import Minio
 from minio.deleteobjects import DeleteObject
@@ -50,7 +50,7 @@ class MinioStore:
         self,
         name: str,
         data: IO,
-        length: int or None = None,
+        length: Optional[int] = None,
         content_type: str = "application/octet-stream",
     ):
         if not length:
