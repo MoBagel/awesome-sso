@@ -105,7 +105,11 @@ to use odmantic engine.
 ### Contributing
 1. project setup: `poetry install`
 2. create your own branch to start developing new feature.
-3. before creating pr, make sure you pass `poe lint` and `poe test`.
+3. before creating pr, make sure you pass `poe lint` and `./run_test.sh`.
+   - what happened inside `./run_test.sh` is that a minio server is setup for you
+     temporarily, and teardown and unit test is finished.
+   - notice that `poe test` would also work if you already have a minio up and running. You need
+    the following env variable: `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `MINIO_ADDRESS` upon running `poe test`.
 4. for a list of available poe command, `poe`
 5. after you submit a pr, you should check if pipeline is successful.
 
