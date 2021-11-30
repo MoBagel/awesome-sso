@@ -75,6 +75,26 @@ errorMessage = formatMessage({ id: `error.${error.data.error_code}` }, error.dat
 Note that error code is not supplied, is default to status code. So it is always safe to simply use error_code in frontend
 to decide what to render.
 
+### Data Store
+#### Minio
+refer to `tests/test_minio.py`
+#### Mongo
+```python
+from awesome_sso.store.mongo import MongoDB
+
+db = MongoDB(
+        host=MONGODB_HOST,
+        port=MONGODB_PORT,
+        username=MONGODB_USERNAME,
+        password=MONGODB_PASSWORD,
+        database=MONGODB_DB,
+)
+db.engine.save(some_odmantic_model)
+db.engine.get(SomeOdmanticModel, query string)
+```
+refer to [odmantic document](https://art049.github.io/odmantic/engine/) on how 
+to use odmantic engine.
+
 ## Development
 
 ### Installing Poetry
