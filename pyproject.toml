@@ -29,6 +29,8 @@ include = [
 python = "~=3.8"
 autoflake = "^1.4"
 coveralls = "^3.3.1"
+odmantic = "^0.3.5"
+minio = "^7.1.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
@@ -47,8 +49,7 @@ build-backend = "poetry.core.masonry.api"
 ROOT = 'awesome_sso'
 
 [tool.poe.tasks]
-mypy = 'mypy $ROOT'
-flake8 = 'flake8 $ROOT --max-line-length 120'
+mypy = 'mypy $ROOT --ignore-missing-imports'
 autoflake-check = 'autoflake $ROOT -r'
 autoflake = 'autoflake --in-place $ROOT -r'
 isort-check = 'isort $ROOT --diff'
@@ -57,5 +58,5 @@ black-check = 'black $ROOT --diff'
 black = 'black $ROOT'
 format-check = ['autoflake-check', 'isort-check', 'black-check']
 format = ['autoflake', 'isort', 'black']
-lint = ['mypy', 'flake8']
-test = 'pytest --cov=$ROOT tests/  --cov-report term-missing'
+lint = ['mypy', 'black-check']
+test = 'pytest --cov=$ROOT --cov-report term-missing'

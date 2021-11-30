@@ -75,6 +75,26 @@ errorMessage = formatMessage({ id: `error.${error.data.error_code}` }, error.dat
 Note that error code is not supplied, is default to status code. So it is always safe to simply use error_code in frontend
 to decide what to render.
 
+### Data Store
+#### Minio
+refer to `tests/test_minio.py`
+#### Mongo
+```python
+from awesome_sso.store.mongo import MongoDB
+
+db = MongoDB(
+        host=MONGODB_HOST,
+        port=MONGODB_PORT,
+        username=MONGODB_USERNAME,
+        password=MONGODB_PASSWORD,
+        database=MONGODB_DB,
+)
+db.engine.save(some_odmantic_model)
+db.engine.get(SomeOdmanticModel, query string)
+```
+refer to [odmantic document](https://art049.github.io/odmantic/engine/) on how 
+to use odmantic engine.
+
 ## Development
 
 ### Installing Poetry
@@ -85,7 +105,11 @@ to decide what to render.
 ### Contributing
 1. project setup: `poetry install`
 2. create your own branch to start developing new feature.
-3. before creating pr, make sure you pass `poe lint` and `poe test`.
+3. before creating pr, make sure you pass `poe lint` and `./run_test.sh`.
+   - what happened inside `./run_test.sh` is that a minio server is setup for you
+     temporarily, and teardown and unit test is finished.
+   - notice that `poe test` would also work if you already have a minio up and running. You need
+    the following env variable: `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `MINIO_ADDRESS` upon running `poe test`.
 4. for a list of available poe command, `poe`
 5. after you submit a pr, you should check if pipeline is successful.
 
