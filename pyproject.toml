@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "awesome-sso"
-version = "0.1.4"
+version = "0.1.5"
 license = "Apache-2.0"
 readme = "README.md"
 description = "sso general utility for services connected to sso"
@@ -27,10 +27,8 @@ include = [
 
 [tool.poetry.dependencies]
 python = "~=3.8"
-autoflake = "^1.4"
-coveralls = "^3.3.1"
-odmantic = "^0.3.5"
 minio = "^7.1.1"
+beanie = "^1.8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
@@ -40,6 +38,8 @@ black = "^21.11b1"
 isort = "^5.10.1"
 mypy = "^0.910"
 poethepoet = "^0.11.0"
+autoflake = "^1.4"
+coveralls = "^3.3.1"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
