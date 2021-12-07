@@ -50,7 +50,7 @@ class AccessToken(BaseModel):
 class RegisterModel(BaseModel):
     name: str
     email: EmailStr
-    sso_user_id: str
+    sso_user_id: PydanticObjectId
 
 
 AwesomeUserType = TypeVar("AwesomeUserType", bound='AwesomeUser')

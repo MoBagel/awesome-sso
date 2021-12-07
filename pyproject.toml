@@ -33,6 +33,7 @@ fastapi = "^0.70.0"
 PyJWT = "^2.3.0"
 bcrypt = "^3.2.0"
 cryptography = "^36.0.0"
+pydantic = {extras = ["email"], version = "^1.8.2"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
@@ -44,6 +45,7 @@ mypy = "^0.910"
 poethepoet = "^0.11.0"
 autoflake = "^1.4"
 coveralls = "^3.3.1"
+pytest-aiohttp = "^0.3.0"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
