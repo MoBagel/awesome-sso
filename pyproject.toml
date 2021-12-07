@@ -29,6 +29,10 @@ include = [
 python = "~=3.8"
 minio = "^7.1.1"
 beanie = "^1.8.0"
+fastapi = "^0.70.0"
+PyJWT = "^2.3.0"
+bcrypt = "^3.2.0"
+cryptography = "^36.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
