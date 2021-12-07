@@ -53,7 +53,7 @@ class RegisterModel(BaseModel):
     sso_user_id: str
 
 
-T = TypeVar('T', bound='AwesomeUser')
+AwesomeUserType = TypeVar("AwesomeUserType", bound='AwesomeUser')
 
 
 class AwesomeUser(Document):
@@ -64,8 +64,7 @@ class AwesomeUser(Document):
     status: Dict[str, Any] = {}
 
     @classmethod
-    async def register(cls: Type[T], args: RegisterModel) -> T:
+    async def register(cls: Type[AwesomeUserType], args: RegisterModel) -> AwesomeUserType:
         return await cls(name=args.name, email=args.email, sso_user_id=args.sso_user_id).create()
 
 
-AwesomeUserType = TypeVar("AwesomeUserType", bound=AwesomeUser)
