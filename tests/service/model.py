@@ -1,4 +1,4 @@
-from awesome_sso.user.schema import AwesomeUser
+from awesome_sso.service.user.schema import AwesomeUser
 
 
 class FantasticUser(AwesomeUser):

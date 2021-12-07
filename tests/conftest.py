@@ -1,40 +1,24 @@
-import motor.motor_asyncio
-import pytest
 from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseSettings
 
-from awesome_sso.user.schema import AwesomeUser
+from awesome_sso.service.user.schema import AwesomeUser
 
 
-class Settings(BaseSettings):
+class MongoSettings(BaseSettings):
     mongodb_dsn: str = "mongodb://localhost:27000/beanie_db"
     mongodb_db_name: str = "beanie_db"
 
 
-@pytest.fixture
-def settings():
-    return Settings()
-
-
-@pytest.fixture()
-def cli(settings, loop):
-    return motor.motor_asyncio.AsyncIOMotorClient(settings.mongodb_dsn)
-
-
-@pytest.fixture()
-def db(cli, settings, loop):
-    return cli[settings.mongodb_db_name]
-
-
-@pytest.fixture(autouse=True)
-async def init(loop, db):
+async def init_mongo():
+    settings = MongoSettings()
     models = [AwesomeUser]
+    cli = AsyncIOMotorClient(settings.mongodb_dsn)
     await init_beanie(
-        database=db,
+        database=cli[settings.mongodb_db_name],
         document_models=models,
     )
-    yield None
-
     for model in models:
         await model.get_motor_collection().drop()
         await model.get_motor_collection().drop_indexes()
+

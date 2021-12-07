@@ -1,13 +1,13 @@
-from awesome_sso.user.schema import AwesomeUser, RegisterModel
-from beanie import PydanticObjectId
 import pytest
 
-from tests.user.model import FantasticUser
+from awesome_sso.service.user.schema import AwesomeUser
+from tests.conftest import init_mongo
+from tests.service.model import FantasticUser
 
 
-@pytest.fixture
-def register_model() -> RegisterModel:
-    return RegisterModel(name="test", email="test@test.com", sso_user_id=PydanticObjectId())
+@pytest.fixture(autouse=True)
+async def init(loop):
+    await init_mongo()
 
 
 async def test_user_registration(register_model):

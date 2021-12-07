@@ -1,6 +1,6 @@
 from typing import Optional, Generic, ClassVar, Type
 
-from awesome_sso.user.schema import AwesomeUserType
+from awesome_sso.service.user.schema import AwesomeUserType
 
 
 class Settings(Generic[AwesomeUserType]):
@@ -8,6 +8,6 @@ class Settings(Generic[AwesomeUserType]):
     user_model: ClassVar[AwesomeUserType]
 
     @staticmethod
-    def init_app(public_key_path: str, user_model: Type[AwesomeUserType]):
+    def init_app(public_key: str, user_model: Type[AwesomeUserType]):
         Settings.user_model = user_model
-        Settings.public_key = open(public_key_path).read()
+        Settings.public_key = public_key

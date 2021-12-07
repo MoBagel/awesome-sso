@@ -1,12 +1,13 @@
 import jwt
+from beanie import PydanticObjectId
 from fastapi import Depends, Security
 from fastapi.logger import logger
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import EmailStr
-from awesome_sso.client.settings import Settings
 
 from awesome_sso.exceptions import NotFound, Unauthorized
-from awesome_sso.user.schema import RegisterModel, AwesomeUserType
+from awesome_sso.service.settings import Settings
+from awesome_sso.service.user.schema import RegisterModel, AwesomeUserType
 
 ALGORITHM = "RS256"
 security = HTTPBearer()
@@ -20,7 +21,7 @@ async def sso_token_decode(
         payload = jwt.decode(jwt_token, Settings.public_key, algorithms=[ALGORITHM])
         del payload["exp"]
     except Exception as e:
-        logger.warn(e)
+        logger.warning(e)
         raise Unauthorized(message=str(e))
     return payload
 
@@ -28,9 +29,10 @@ async def sso_token_decode(
 async def sso_registration(
         register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
 ) -> RegisterModel:
+    payload['sso_user_id'] = PydanticObjectId(payload['sso_user_id'])
     if payload != register_model.dict():
-        logger.warn(payload)
-        logger.warn(register_model.dict())
+        logger.warning(payload)
+        logger.warning(register_model.dict())
         raise Unauthorized(message="authentication invalid")
     return RegisterModel(**payload)
 

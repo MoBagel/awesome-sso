@@ -24,7 +24,7 @@ if [ -z ${SERVER_ENDPOINT+x} ]; then
     run_mongo
 fi
 
-pytest --cov=awesome_sso tests/ --cov-report term-missing
+pytest --cov=awesome_sso tests --cov-report term-missing
 if [ -n "$MINIO_PID" ]; then
     kill -9 "$MINIO_PID" 2>/dev/null
     docker rm -f awesome-mongo
