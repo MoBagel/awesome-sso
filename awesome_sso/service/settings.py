@@ -1,4 +1,4 @@
-from typing import Optional, Generic, ClassVar, Type
+from typing import ClassVar, Generic, Optional, Type
 
 from awesome_sso.service.user.schema import AwesomeUserType
 

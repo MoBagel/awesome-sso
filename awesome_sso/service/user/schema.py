@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, List, Optional, Dict, TypeVar, Type
+from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from beanie import Document, PydanticObjectId
 from pydantic import AnyHttpUrl, BaseModel, EmailStr
@@ -53,7 +53,7 @@ class RegisterModel(BaseModel):
     sso_user_id: PydanticObjectId
 
 
-AwesomeUserType = TypeVar("AwesomeUserType", bound='AwesomeUser')
+AwesomeUserType = TypeVar("AwesomeUserType", bound="AwesomeUser")
 
 
 class AwesomeUser(Document):
@@ -63,8 +63,13 @@ class AwesomeUser(Document):
     setting: Dict[str, Any] = {}
     status: Dict[str, Any] = {}
 
+    class Collection:
+        name = "user"
+
     @classmethod
-    async def register(cls: Type[AwesomeUserType], args: RegisterModel) -> AwesomeUserType:
-        return await cls(name=args.name, email=args.email, sso_user_id=args.sso_user_id).create()
-
-
+    async def register(
+        cls: Type[AwesomeUserType], args: RegisterModel
+    ) -> AwesomeUserType:
+        return await cls(
+            name=args.name, email=args.email, sso_user_id=args.sso_user_id
+        ).create()

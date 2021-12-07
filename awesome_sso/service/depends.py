@@ -7,14 +7,14 @@ from pydantic import EmailStr
 
 from awesome_sso.exceptions import NotFound, Unauthorized
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import RegisterModel, AwesomeUserType
+from awesome_sso.service.user.schema import AwesomeUserType, RegisterModel
 
 ALGORITHM = "RS256"
 security = HTTPBearer()
 
 
 async def sso_token_decode(
-        credentials: HTTPAuthorizationCredentials = Security(security),
+    credentials: HTTPAuthorizationCredentials = Security(security),
 ) -> dict:
     try:
         jwt_token = credentials.credentials
@@ -27,9 +27,9 @@ async def sso_token_decode(
 
 
 async def sso_registration(
-        register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
+    register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
 ) -> RegisterModel:
-    payload['sso_user_id'] = PydanticObjectId(payload['sso_user_id'])
+    payload["sso_user_id"] = PydanticObjectId(payload["sso_user_id"])
     if payload != register_model.dict():
         logger.warning(payload)
         logger.warning(register_model.dict())
