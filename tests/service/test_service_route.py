@@ -1,4 +1,3 @@
-import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -12,30 +11,22 @@ from tests.conftest import init_mongo
 cli: AsyncIOMotorClient
 
 
-@pytest.fixture()
-def app():
-    app = FastAPI(on_startup=[init_mongo])
-    service_settings: Settings = Settings()
-    service: Service = Service()
-
-    service_settings.init_app(PUBLIC_KEY, AwesomeUser)
-    service.init_app(app)
-    return app
+app = FastAPI(on_startup=[init_mongo])
+service_settings: Settings = Settings()
+service: Service = Service()
+service_settings.init_app(PUBLIC_KEY, AwesomeUser)
+service.init_app(app)
+client = TestClient(app)
 
 
-@pytest.fixture()
-def client(app):
-    return TestClient(app)
-
-
-def test_root(client):
+def test_root():
     with client:
         response = client.get("/sso")
         assert response.status_code == 200, response.text
         assert response.json() == ["OK"]
 
 
-def test_register(register_model: RegisterModel, client):
+def test_register(register_model: RegisterModel):
     with client:
         response = client.post("/sso/register")
         assert response.status_code == 403, response.text

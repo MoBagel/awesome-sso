@@ -1,34 +1,19 @@
-from awesome_sso.store.minio import MinioStore
-import tempfile
 import json
-import os
+import tempfile
 
 
-ACCESS_KEY = os.environ.get('MINIO_ACCESS_KEY')
-SECRET_KEY = os.environ.get('MINIO_SECRET_KEY')
-BUCKET = 'test'
-HOST = os.environ.get('MINIO_ADDRESS')
-test_string = b'to grasp how wide and long and high and deep is the love of Christ'
-
-object_store = MinioStore(host=HOST, bucket=BUCKET, access_key=ACCESS_KEY, secret_key=SECRET_KEY)
-
-
-def test_bucket_creation():
-    buckets = object_store.client.list_buckets()
-    assert 'test' in buckets
-    #  make sure bucket creation work on first time as well as on second time
-    MinioStore(host=HOST, bucket=BUCKET, access_key=ACCESS_KEY, secret_key=SECRET_KEY)
-    buckets = object_store.client.list_buckets()
+def test_bucket_creation(minio_store):
+    buckets = minio_store.client.list_buckets()
     assert 'test' in buckets
 
 
-def test_fput():
+def test_fput(minio_store, test_string):
     with tempfile.NamedTemporaryFile() as file:
         file.write(test_string)
         file.flush()
-        object_store.fput(file.name, file.name)
-    begotten = object_store.get(file.name)
-    assert object_store.exists(file.name)
+        minio_store.fput(file.name, file.name)
+    begotten = minio_store.get(file.name)
+    assert minio_store.exists(file.name)
     assert begotten.read(len(test_string)) == test_string
     begotten.release_conn()
 
@@ -36,39 +21,37 @@ def test_fput():
         with tempfile.NamedTemporaryFile(dir=dir) as file:
             file.write(test_string)
             file.flush()
-            object_store.fput(dir, dir)
-    assert object_store.exists(file.name)
+            minio_store.fput(dir, dir)
+    assert minio_store.exists(file.name)
 
 
-def test_put():
+def test_put(minio_store, test_string):
     with tempfile.NamedTemporaryFile() as file:
         file.write(test_string)
         file.flush()
         file.seek(0)
-        object_store.put(file.name, file)
-    begotten = object_store.get(file.name)
-    assert object_store.exists(file.name)
+        minio_store.put(file.name, file)
+    begotten = minio_store.get(file.name)
+    assert minio_store.exists(file.name)
     assert begotten.read(len(test_string)) == test_string
     begotten.release_conn()
 
 
-def test_put_as_json():
-    test_dict = {'test_string': test_string.decode('utf-8')}
-    object_store.put_as_json('dict.json', test_dict)
-    assert object_store.exists('dict.json')
-    begotten = object_store.get('dict.json')
+def test_put_as_json(minio_store, test_dict):
+    minio_store.put_as_json('dict.json', test_dict)
+    assert minio_store.exists('dict.json')
+    begotten = minio_store.get('dict.json')
     begotten_dict = json.load(begotten)
     assert begotten_dict['test_string'] == test_dict['test_string']
     begotten.release_conn()
 
 
-def test_remove_object_and_dir():
-    test_dict = {'test_string': test_string.decode('utf-8')}
-    object_store.put_as_json('dict.json', test_dict)
-    object_store.put_as_json('tmp/dict.json', test_dict)
-    assert object_store.exists('dict.json')
-    assert object_store.exists('tmp/dict.json')
-    object_store.remove_object('dict.json')
-    assert object_store.exists('dict.json') is False
-    object_store.remove_dir('tmp')
-    assert object_store.exists('tmp/dict.json') is False
+def test_remove_object_and_dir(minio_store, test_dict):
+    minio_store.put_as_json('dict.json', test_dict)
+    minio_store.put_as_json('tmp/dict.json', test_dict)
+    assert minio_store.exists('dict.json')
+    assert minio_store.exists('tmp/dict.json')
+    minio_store.remove_object('dict.json')
+    assert minio_store.exists('dict.json') is False
+    minio_store.remove_dir('tmp')
+    assert minio_store.exists('tmp/dict.json') is False
