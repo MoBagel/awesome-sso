@@ -18,7 +18,7 @@ from awesome_sso.service.user.schema import (
     AwesomeUserType,
     RegisterModel,
 )
-from awesome_sso.util.jwt import create_symmetric_token
+from awesome_sso.util.jwt import SYMMETRIC_ALGORITHM, create_token
 
 router = APIRouter(tags=["sso"])
 
@@ -50,7 +50,12 @@ async def register(register_model: RegisterModel = Depends(sso_registration)):
 async def login(user: Type[AwesomeUserType] = Depends(sso_user)):
     jwt_payload = JWTPayload(user_id=user.id).dict()
     jwt_payload["user_id"] = str(jwt_payload["user_id"])
-    token = create_symmetric_token(jwt_payload, expires_delta=timedelta(days=7))
+    token = create_token(
+        jwt_payload,
+        Settings.symmetric_key,
+        SYMMETRIC_ALGORITHM,
+        expires_delta=timedelta(days=7),
+    )
     return AccessToken(access_token=token)
 
 
