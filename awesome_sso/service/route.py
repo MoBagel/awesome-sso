@@ -1,12 +1,14 @@
+from datetime import timedelta
 from typing import Type
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi.logger import logger
 
 from awesome_sso.exceptions import BadRequest, HTTPException, InternalServerError
-from awesome_sso.service.depends import sso_registration
+from awesome_sso.service.depends import sso_registration, sso_user, JWTPayload, sso_user_email
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import AwesomeUser, RegisterModel
+from awesome_sso.service.user.schema import AwesomeUser, RegisterModel, AccessToken, AwesomeUserType
+from awesome_sso.util.jwt import create_access_token
 
 router = APIRouter(tags=["sso"])
 
@@ -32,3 +34,22 @@ async def register(register_model: RegisterModel = Depends(sso_registration)):
         logger.warning(str(e))
         raise InternalServerError(message=str(e))
     return user
+
+
+@router.post("/login", summary="get login access token", response_model=AccessToken)
+async def login(user: Type[AwesomeUserType] = Depends(sso_user)):
+    jwt_payload = JWTPayload(user_id=user.id).dict()
+    jwt_payload["user_id"] = str(jwt_payload["user_id"])
+    token = create_access_token(jwt_payload, expires_delta=timedelta(days=7))
+    return AccessToken(access_token=token)
+
+
+@router.post("/unregister")
+async def unregister(email: str = Depends(sso_user_email)):
+    user = await Settings.user_model.find_one(Settings.user_model.email == email)
+    if user is None:
+        return Response(status_code=200, content="requested user not exist")
+    else:
+        await user.delete_data()
+        await user.delete()
+        return Response(status_code=200, content="user unregistered")

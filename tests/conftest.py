@@ -20,6 +20,21 @@ def settings():
     return TestSettings()
 
 
+@pytest.fixture
+async def public_key() -> str:
+    return open("tests/key_pairs/test.key.pub").read()
+
+
+@pytest.fixture
+async def private_key() -> str:
+    return open("tests/key_pairs/test.key").read()
+
+
+@pytest.fixture
+async def symmetric_key() -> str:
+    return "chloeisboss"
+
+
 async def init_mongo():
     settings = TestSettings()
     models = [AwesomeUser]
@@ -31,4 +46,3 @@ async def init_mongo():
     for model in models:
         await model.get_motor_collection().drop()
         await model.get_motor_collection().drop_indexes()
-

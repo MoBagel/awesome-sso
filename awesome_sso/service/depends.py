@@ -1,9 +1,11 @@
+from typing import Optional, Type
+
 import jwt
 from beanie import PydanticObjectId
 from fastapi import Depends, Security
 from fastapi.logger import logger
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import EmailStr
+from pydantic import EmailStr, BaseModel
 
 from awesome_sso.exceptions import NotFound, Unauthorized
 from awesome_sso.service.settings import Settings
@@ -13,8 +15,12 @@ ALGORITHM = "RS256"
 security = HTTPBearer()
 
 
+class JWTPayload(BaseModel):
+    user_id: Optional[PydanticObjectId] = None
+
+
 async def sso_token_decode(
-    credentials: HTTPAuthorizationCredentials = Security(security),
+        credentials: HTTPAuthorizationCredentials = Security(security),
 ) -> dict:
     try:
         jwt_token = credentials.credentials
@@ -27,7 +33,7 @@ async def sso_token_decode(
 
 
 async def sso_registration(
-    register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
+        register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
 ) -> RegisterModel:
     payload["sso_user_id"] = PydanticObjectId(payload["sso_user_id"])
     if payload != register_model.dict():
@@ -44,8 +50,8 @@ async def sso_user_email(payload: dict = Depends(sso_token_decode)) -> EmailStr:
     return payload["email"]
 
 
-async def sso_user(user_email: dict = Depends(sso_user_email)) -> AwesomeUserType:
-    user = await AwesomeUserType.find_one(AwesomeUserType.email == user_email)
+async def sso_user(user_email: dict = Depends(sso_user_email)) -> Type[AwesomeUserType]:
+    user = await Settings.user_model.find_one(AwesomeUserType.email == user_email)
     if user is None:
         raise NotFound("user not found")
     return user
