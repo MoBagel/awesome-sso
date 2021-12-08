@@ -10,8 +10,6 @@ from awesome_sso.util.encode import JSONEncoder
 # openssl rand -hex 32
 ASYMMETRIC_ALGORITHM = "RS256"
 SYMMETRIC_ALGORITHM = "HS256"
-PUBLIC_KEY = open("tests/key_pairs/test.key.pub").read()
-PRIVATE_KEY = open("tests/key_pairs/test.key").read()
 
 
 # 生成token

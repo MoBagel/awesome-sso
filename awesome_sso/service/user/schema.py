@@ -73,3 +73,6 @@ class AwesomeUser(Document):
         return await cls(
             name=args.name, email=args.email, sso_user_id=args.sso_user_id
         ).create()
+
+    async def delete_data(self):
+        pass
