@@ -35,6 +35,21 @@ async def symmetric_key() -> str:
     return "chloeisboss"
 
 
+@pytest.fixture
+async def symmetric_algorithm() -> str:
+    return "HS256"
+
+
+@pytest.fixture
+async def asymmetric_algorithm() -> str:
+    return "RS256"
+
+
+@pytest.fixture
+async def service_name() -> str:
+    return "test"
+
+
 async def init_mongo():
     settings = TestSettings()
     models = [AwesomeUser]

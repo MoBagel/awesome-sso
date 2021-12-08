@@ -34,6 +34,8 @@ PyJWT = "^2.3.0"
 bcrypt = "^3.2.0"
 cryptography = "^36.0.0"
 pydantic = {extras = ["email"], version = "^1.8.2"}
+APScheduler = "^3.8.1"
+psutil = "^5.8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"

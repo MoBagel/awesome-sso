@@ -13,7 +13,7 @@ SYMMETRIC_ALGORITHM = "HS256"
 
 
 # 生成token
-def create_jwt_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_asymmetric_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -26,7 +26,7 @@ def create_jwt_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_symmetric_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta

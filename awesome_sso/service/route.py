@@ -8,7 +8,7 @@ from awesome_sso.exceptions import BadRequest, HTTPException, InternalServerErro
 from awesome_sso.service.depends import sso_registration, sso_user, JWTPayload, sso_user_email
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AwesomeUser, RegisterModel, AccessToken, AwesomeUserType
-from awesome_sso.util.jwt import create_access_token
+from awesome_sso.util.jwt import create_symmetric_token
 
 router = APIRouter(tags=["sso"])
 
@@ -40,7 +40,7 @@ async def register(register_model: RegisterModel = Depends(sso_registration)):
 async def login(user: Type[AwesomeUserType] = Depends(sso_user)):
     jwt_payload = JWTPayload(user_id=user.id).dict()
     jwt_payload["user_id"] = str(jwt_payload["user_id"])
-    token = create_access_token(jwt_payload, expires_delta=timedelta(days=7))
+    token = create_symmetric_token(jwt_payload, expires_delta=timedelta(days=7))
     return AccessToken(access_token=token)
 
 
