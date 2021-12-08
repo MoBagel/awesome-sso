@@ -29,3 +29,4 @@ if [ -n "$MINIO_PID" ]; then
     kill -9 "$MINIO_PID" 2>/dev/null
     docker rm -f awesome-mongo
 fi
+
