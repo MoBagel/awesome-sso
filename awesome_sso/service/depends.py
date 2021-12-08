@@ -5,7 +5,7 @@ from beanie import PydanticObjectId
 from fastapi import Depends, Security
 from fastapi.logger import logger
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import EmailStr, BaseModel
+from pydantic import BaseModel, EmailStr
 
 from awesome_sso.exceptions import NotFound, Unauthorized
 from awesome_sso.service.settings import Settings
@@ -20,7 +20,7 @@ class JWTPayload(BaseModel):
 
 
 async def sso_token_decode(
-        credentials: HTTPAuthorizationCredentials = Security(security),
+    credentials: HTTPAuthorizationCredentials = Security(security),
 ) -> dict:
     try:
         jwt_token = credentials.credentials
@@ -33,7 +33,7 @@ async def sso_token_decode(
 
 
 async def sso_registration(
-        register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
+    register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
 ) -> RegisterModel:
     payload["sso_user_id"] = PydanticObjectId(payload["sso_user_id"])
     if payload != register_model.dict():

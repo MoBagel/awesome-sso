@@ -21,7 +21,10 @@ def create_asymmetric_token(data: dict, expires_delta: Optional[timedelta] = Non
         expire = datetime.utcnow() + timedelta(days=15)
     to_encode.update({"exp": datetime.timestamp(expire)})
     encoded_jwt = jwt.encode(
-        to_encode, Settings.private_key, algorithm=ASYMMETRIC_ALGORITHM, json_encoder=JSONEncoder
+        to_encode,
+        Settings.private_key,
+        algorithm=ASYMMETRIC_ALGORITHM,
+        json_encoder=JSONEncoder,
     )
     return encoded_jwt
 
@@ -33,5 +36,7 @@ def create_symmetric_token(data: dict, expires_delta: Optional[timedelta] = None
     else:
         expire = datetime.utcnow() + timedelta(days=15)
     to_encode.update({"exp": datetime.timestamp(expire)})
-    encoded_jwt = jwt.encode(to_encode, Settings.symmetric_key, algorithm=SYMMETRIC_ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, Settings.symmetric_key, algorithm=SYMMETRIC_ALGORITHM
+    )
     return encoded_jwt

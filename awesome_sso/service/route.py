@@ -5,9 +5,19 @@ from fastapi import APIRouter, Depends, Response
 from fastapi.logger import logger
 
 from awesome_sso.exceptions import BadRequest, HTTPException, InternalServerError
-from awesome_sso.service.depends import sso_registration, sso_user, JWTPayload, sso_user_email
+from awesome_sso.service.depends import (
+    JWTPayload,
+    sso_registration,
+    sso_user,
+    sso_user_email,
+)
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import AwesomeUser, RegisterModel, AccessToken, AwesomeUserType
+from awesome_sso.service.user.schema import (
+    AccessToken,
+    AwesomeUser,
+    AwesomeUserType,
+    RegisterModel,
+)
 from awesome_sso.util.jwt import create_symmetric_token
 
 router = APIRouter(tags=["sso"])

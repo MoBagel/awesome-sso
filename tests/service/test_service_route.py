@@ -1,15 +1,15 @@
 import json
-from typing import Type
 
 import jwt
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import AnyUrl
 
 from awesome_sso.service import Service
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import AwesomeUser, RegisterModel, AwesomeUserType
+from awesome_sso.service.user.schema import AwesomeUser, RegisterModel
 from awesome_sso.util.jwt import create_asymmetric_token
 from tests.conftest import init_mongo
 
@@ -23,8 +23,8 @@ client = TestClient(app)
 
 
 @pytest.fixture(autouse=True)
-def init(loop, symmetric_key: str, public_key: str, private_key: str, service_name: str):
-    service_settings.init_app(public_key, private_key, symmetric_key, AwesomeUser, service_name)
+def init(loop, symmetric_key: str, public_key: str, private_key: str, service_name: str, sso_domain: AnyUrl):
+    service_settings.init_app(public_key, private_key, symmetric_key, AwesomeUser, service_name, sso_domain)
 
 
 def test_root():
