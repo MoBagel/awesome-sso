@@ -11,7 +11,7 @@ class Settings(Generic[AwesomeUserType]):
     public_key: Optional[str] = None
     private_key: Optional[str] = None
     symmetric_key: Optional[str] = None
-    user_model: ClassVar[AwesomeUserType]
+    user_model: ClassVar[AwesomeUserType] = None
 
     @staticmethod
     def init_app(
