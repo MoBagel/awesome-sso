@@ -53,7 +53,9 @@ async def sso_user_email(payload: dict = Depends(sso_token_decode)) -> EmailStr:
 
 
 async def sso_user(user_email: dict = Depends(sso_user_email)) -> AwesomeUserType:
-    user = await Settings.user_model.find_one(Settings.user_model.email == user_email)
+    user = await Settings[AwesomeUserType]().user_model.find_one(
+        Settings[AwesomeUserType]().user_model.email == user_email
+    )
     if user is None:
         raise NotFound("user not found")
     return user

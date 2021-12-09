@@ -26,11 +26,11 @@ def health_check():
 @router.post("/register", summary="register user")
 async def register(register_model: RegisterModel = Depends(sso_registration)):
     try:
-        user: AwesomeUserType = await Settings.user_model.find_one(
-            Settings.user_model.email == register_model.email
+        user = await Settings[AwesomeUserType]().user_model.find_one(  # type: ignore
+            Settings[AwesomeUserType]().user_model.email == register_model.email  # type: ignore
         )
         if user is None:
-            user = await Settings.user_model.register(register_model)
+            user = await Settings[AwesomeUserType]().user_model.register(register_model)  # type: ignore
         else:
             raise BadRequest(message="user email %s taken" % register_model.email)
     except HTTPException as e:
@@ -57,7 +57,7 @@ async def login(user: Type[AwesomeUserType] = Depends(sso_user)):
 
 @router.post("/unregister")
 async def unregister(email: str = Depends(sso_user_email)):
-    user = await Settings.user_model.find_one(Settings.user_model.email == email)
+    user = await Settings[AwesomeUserType]().user_model.find_one(Settings[AwesomeUserType]().user_model.email == email)  # type: ignore
     if user is None:
         return Response(status_code=200, content="requested user not exist")
     else:
