@@ -1,11 +1,8 @@
-import logging
 import os
-from datetime import datetime
 from typing import List
 
 import psutil
 import requests
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi.logger import logger
 
 from awesome_sso.service.settings import Settings
@@ -48,12 +45,3 @@ def unregister_service():
             response_error_check(resp)
         except Exception as e:
             logger.warning("unable to unregister with sso: %s", str(e))
-
-
-if os.environ.get("SSO_REGISTER") == "true":
-    scheduler = AsyncIOScheduler()
-    scheduler.start()
-    logging.getLogger("apscheduler.executors.default").propagate = False
-    scheduler.add_job(
-        register_service, "interval", seconds=30, next_run_time=datetime.now()
-    )

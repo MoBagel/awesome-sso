@@ -57,6 +57,7 @@ build-backend = "poetry.core.masonry.api"
 ROOT = 'awesome_sso'
 
 [tool.poe.tasks]
+mypy-install-type = 'mypy $ROOT --ignore-missing-imports --install-types --non-interactive'
 mypy = 'mypy $ROOT --ignore-missing-imports'
 autoflake-check = 'autoflake $ROOT -r'
 autoflake = 'autoflake --in-place $ROOT -r'
@@ -66,5 +67,5 @@ black-check = 'black $ROOT --diff'
 black = 'black $ROOT'
 format-check = ['autoflake-check', 'isort-check', 'black-check']
 format = ['autoflake', 'isort', 'black']
-lint = ['mypy', 'black-check']
+lint = ['mypy-install-type', 'mypy', 'black-check']
 test = 'pytest --cov=$ROOT --cov-report term-missing'

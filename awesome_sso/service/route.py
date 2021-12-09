@@ -12,12 +12,7 @@ from awesome_sso.service.depends import (
     sso_user_email,
 )
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import (
-    AccessToken,
-    AwesomeUser,
-    AwesomeUserType,
-    RegisterModel,
-)
+from awesome_sso.service.user.schema import AccessToken, AwesomeUserType, RegisterModel
 from awesome_sso.util.jwt import SYMMETRIC_ALGORITHM, create_token
 
 router = APIRouter(tags=["sso"])
@@ -28,10 +23,10 @@ def health_check():
     return ["OK"]
 
 
-@router.post("/register", summary="register user", response_model=AwesomeUser)
+@router.post("/register", summary="register user")
 async def register(register_model: RegisterModel = Depends(sso_registration)):
     try:
-        user: Type[Settings.user_model] = await Settings.user_model.find_one(
+        user: AwesomeUserType = await Settings.user_model.find_one(
             Settings.user_model.email == register_model.email
         )
         if user is None:
@@ -39,9 +34,10 @@ async def register(register_model: RegisterModel = Depends(sso_registration)):
         else:
             raise BadRequest(message="user email %s taken" % register_model.email)
     except HTTPException as e:
+        logger.warn(str(e))
         raise e
     except Exception as e:
-        logger.warning(str(e))
+        logger.warn(str(e))
         raise InternalServerError(message=str(e))
     return user
 

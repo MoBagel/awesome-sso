@@ -1,4 +1,4 @@
-from typing import Optional, Type
+from typing import Optional
 
 import jwt
 from beanie import PydanticObjectId
@@ -10,8 +10,8 @@ from pydantic import BaseModel, EmailStr
 from awesome_sso.exceptions import NotFound, Unauthorized
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AwesomeUserType, RegisterModel
+from awesome_sso.util.jwt import ASYMMETRIC_ALGORITHM
 
-ALGORITHM = "RS256"
 security = HTTPBearer()
 
 
@@ -24,7 +24,9 @@ async def sso_token_decode(
 ) -> dict:
     try:
         jwt_token = credentials.credentials
-        payload = jwt.decode(jwt_token, Settings.public_key, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            jwt_token, Settings.public_key, algorithms=[ASYMMETRIC_ALGORITHM]
+        )
         del payload["exp"]
     except Exception as e:
         logger.warning(e)
@@ -50,7 +52,7 @@ async def sso_user_email(payload: dict = Depends(sso_token_decode)) -> EmailStr:
     return payload["email"]
 
 
-async def sso_user(user_email: dict = Depends(sso_user_email)) -> Type[AwesomeUserType]:
+async def sso_user(user_email: dict = Depends(sso_user_email)) -> AwesomeUserType:
     user = await Settings.user_model.find_one(Settings.user_model.email == user_email)
     if user is None:
         raise NotFound("user not found")

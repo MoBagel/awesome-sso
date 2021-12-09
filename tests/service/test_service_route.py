@@ -24,7 +24,8 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def init(loop, symmetric_key: str, public_key: str, private_key: str, service_name: str, sso_domain: AnyHttpUrl):
-    service_settings.init_app(public_key, private_key, symmetric_key, AwesomeUser, service_name, sso_domain)
+    service_settings.init_app(symmetric_key=symmetric_key, user_model=AwesomeUser, service_name=service_name,
+                              public_key=public_key, private_key=private_key, sso_domain=sso_domain)
 
 
 def test_root():
