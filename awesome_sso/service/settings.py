@@ -1,9 +1,9 @@
-from typing import Generic, Optional
+from typing import Generic, Optional, Type
 
 from fastapi.logger import logger
 from pydantic import AnyHttpUrl, parse_obj_as
 
-from awesome_sso.service.user.schema import AwesomeUser, AwesomeUserType
+from awesome_sso.service.user.schema import AwesomeUserType
 
 
 class Settings(Generic[AwesomeUserType]):
@@ -12,13 +12,13 @@ class Settings(Generic[AwesomeUserType]):
     public_key: str = ""
     private_key: Optional[str] = None
     symmetric_key: Optional[str] = None
-    user_model: AwesomeUserType
+    user_model: Type[AwesomeUserType]
 
     @classmethod
     def init_app(
         cls,
         symmetric_key: str,
-        user_model: AwesomeUserType,
+        user_model: Type[AwesomeUserType],
         service_name: str,
         public_key: str,
         private_key: str = None,
