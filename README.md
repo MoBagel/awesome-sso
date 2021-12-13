@@ -10,7 +10,9 @@ A library designed to host common components for a cluster of microservices shar
 
 - [x] A common exception class, supporting both status code and custom error code to map to more detailed error message
   or serve as i18n key.
-- [x] A common FastAPI app for interaction with service, like user login ,registration and unregistration. 
+- [x] A common FastAPI app for interaction with service, like login ,registration and unregistration.
+- [x] a connector for minio object store.
+- [x] a connector for beanie, a mongo odm compatible with pydantic.
 
 ## Usage
 
@@ -95,22 +97,26 @@ refer to `tests/test_minio.py`
 
 #### Mongo
 
+refer to `tests/service/test_user.py`
+
 ```python
-from awesome_sso.store.mongo import MongoDB
+from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
+from awesome_sso.service.user.schema import AwesomeUser
 
-db = MongoDB(
-    host=MONGODB_HOST,
-    port=MONGODB_PORT,
-    username=MONGODB_USERNAME,
-    password=MONGODB_PASSWORD,
-    database=MONGODB_DB,
-)
-db.engine.save(some_odmantic_model)
-db.engine.get(SomeOdmanticModel, query
-string)
+
+def init_mongo():
+    settings = YOUR_SETTINGS()
+    models = [AwesomeUser]
+    cli = AsyncIOMotorClient(settings.mongodb_dsn)
+    await init_beanie(
+        database=cli[settings.mongodb_db_name],
+        document_models=models,
+    )
+    for model in models:
+        await model.get_motor_collection().drop()
+        await model.get_motor_collection().drop_indexes()
 ```
-
-refer to [odmantic document](https://art049.github.io/odmantic/engine/) on how to use odmantic engine.
 
 ### Service
 
@@ -125,11 +131,13 @@ settings.init_app(
     public_key='YOUR_PUBLIC_KEY',  # to decode the token signed by sso
     user_model=USER_MODEL,  # user orm needs to inherit AwesomeUser from `awesome_sso.user.schema`
     service_name='YOUR_SERVICE_NAME',  # for service discovery, to recognize service
-    sso_domain='YOUR_SSO_DOMAIN', # for service registration and sync user
+    sso_domain='YOUR_SSO_DOMAIN',  # for service registration and sync user
 )
 
 ```
+
 #### initial service and mount to your application
+
 ```python
 from awesome_sso.service import Service
 from fastapi import FastAPI
@@ -137,15 +145,10 @@ from fastapi import FastAPI
 app = FastAPI()
 service = Service()
 service.init_app(YOUR_FASTAPI_APP)
-app.mount('/YOUR/PATH',YOUR_FASTAPI_APP)
+app.mount('/YOUR/PATH', YOUR_FASTAPI_APP)
 ```
+
 then open the api doc, you will see the apis in `awesome_sso.service.user.route`
-
-#### 
-
-```python
-```
-
 
 ## Development
 
