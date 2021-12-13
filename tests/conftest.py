@@ -7,7 +7,7 @@ from awesome_sso.service.user.schema import AwesomeUser
 
 
 class TestSettings(BaseSettings):
-    mongodb_dsn: str = Field(default="mongodb://localhost:27000/beanie_db", env='MONGODB_DSN')
+    mongodb_dsn: str = Field(default="mongodb://localhost:27017/beanie_db", env='MONGODB_DSN')
     mongodb_db_name: str = Field(default="beanie_db", env='MONGODB_DB_NAME')
     minio_access_key: str = Field(default="minioadmin", env='MINIO_ACCESS_KEY')
     minio_secret_key: str = Field(default="minioadmin", env='MINIO_SECRET_KEY')

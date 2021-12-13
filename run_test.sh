@@ -24,6 +24,7 @@ if [ -z ${SERVER_ENDPOINT+x} ]; then
     run_mongo
 fi
 
+export MONGODB_DNS=mongodb://localhost:27000/beanie_db
 pytest --cov=awesome_sso tests --cov-report term-missing
 if [ -n "$MINIO_PID" ]; then
     kill -9 "$MINIO_PID" 2>/dev/null
