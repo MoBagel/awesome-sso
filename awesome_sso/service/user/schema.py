@@ -61,7 +61,6 @@ class AwesomeUser(Document):
     email: EmailStr
     sso_user_id: PydanticObjectId
     settings: Dict[str, Any] = {}
-    status: Dict[str, Any] = {}
 
     class Collection:
         name = "user"
