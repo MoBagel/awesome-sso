@@ -41,7 +41,7 @@ class Unauthorized(HTTPException):
 class NotFound(HTTPException):
     def __init__(self, message, error_code: Optional[str] = None, args: dict = {}):
         super().__init__(
-            status_code=403,
+            status_code=404,
             message="Not Found: %s" % message,
             error_code=error_code,
             args=args,
