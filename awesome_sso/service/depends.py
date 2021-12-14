@@ -47,9 +47,9 @@ async def sso_registration(
     return RegisterModel(**payload)
 
 
-async def sso_user_email(payload: dict = Depends(sso_token_decode)) -> EmailStr:
+def sso_user_email(payload: dict = Depends(sso_token_decode)) -> EmailStr:
     if "email" not in payload:
-        logger.warn(payload)
+        logger.warning(payload)
         raise NotFound("email not found")
     return payload["email"]
 
@@ -84,11 +84,11 @@ async def jwt_token_decode(sso: str = Cookie(None)) -> JWTPayload:
     return jwt_payload
 
 
-async def sso_user_id(
+def sso_user_id(
     payload: JWTPayload = Depends(jwt_token_decode),
 ) -> PydanticObjectId:
     if payload.sso_user_id is None:
-        logger.warn(payload)
+        logger.warning(payload)
         raise NotFound("sso user id not found")
     return payload.sso_user_id
 

@@ -1,7 +1,6 @@
 import pytest
 
 from awesome_sso.service.user.schema import AwesomeUser
-from awesome_sso.service.user.sync_user import sync_user
 from tests.conftest import init_mongo
 from tests.service.model import FantasticUser
 

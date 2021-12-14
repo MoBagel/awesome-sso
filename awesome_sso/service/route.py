@@ -4,7 +4,6 @@ from fastapi.logger import logger
 from awesome_sso.exceptions import BadRequest, HTTPException, InternalServerError
 from awesome_sso.service.depends import (
     JWTPayload,
-    jwt_token_decode,
     sso_registration,
     sso_token_decode,
     sso_user_email,
@@ -46,9 +45,9 @@ async def login(payload: JWTPayload = Depends(sso_token_decode)):
 
 @router.post("/unregister")
 async def unregister(email: str = Depends(sso_user_email)):
-    user = await Settings[AwesomeUserType]().user_model.find_one(
-        Settings[AwesomeUserType]().user_model.email == email
-    )  # type: ignore
+    user = await Settings[AwesomeUserType]().user_model.find_one(  # type: ignore
+        Settings[AwesomeUserType]().user_model.email == email  # type: ignore
+    )
     if user is None:
         return Response(status_code=200, content="requested user not exist")
     else:
