@@ -1,4 +1,3 @@
-from typing import Type
 
 import requests
 
@@ -6,7 +5,7 @@ from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AwesomeUserType
 
 
-async def sync_user(user: Type[AwesomeUserType]):
+async def sync_user(user: AwesomeUserType):
     resp = requests.get(
         "%s/user" % Settings.sso_domain, params={"user_id": str(user.sso_user_id)}
     )

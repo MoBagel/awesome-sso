@@ -44,8 +44,8 @@ async def register(register_model: RegisterModel = Depends(sso_registration)):
 
 @router.post("/login", summary="get login access token", response_model=AccessToken)
 async def login(user: Type[AwesomeUserType] = Depends(sso_user)):
-    jwt_payload = JWTPayload(user_id=user.id).dict()
-    jwt_payload["user_id"] = str(jwt_payload["user_id"])
+    jwt_payload = JWTPayload(sso_user_id=user.id).dict()
+    jwt_payload["sso_user_id"] = str(jwt_payload["sso_user_id"])
     token = create_token(
         jwt_payload,
         Settings.symmetric_key,
