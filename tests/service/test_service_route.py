@@ -8,6 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import AnyHttpUrl
 
 from awesome_sso.service import Service
+from awesome_sso.service.depends import sso_token_decode
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AwesomeUser, RegisterModel
 from awesome_sso.util.jwt import create_token
@@ -48,6 +49,9 @@ def test_register(register_model: RegisterModel, asymmetric_algorithm):
         assert response.status_code == 422, response.text
         response = client.post("/register", data=register_model.json(), headers=valid_headers)
         assert response.status_code == 200, response.text
+        # test register existed user
+        response = client.post("/register", data=register_model.json(), headers=valid_headers)
+        assert response.status_code == 400, response.text
 
 
 def test_login(register_model: RegisterModel, symmetric_key: str, symmetric_algorithm: str, asymmetric_algorithm):
@@ -61,13 +65,8 @@ def test_login(register_model: RegisterModel, symmetric_key: str, symmetric_algo
         valid_headers = {"Authorization": token}
         user_response = client.post("/register", data=register_model.json(), headers=valid_headers)
         assert user_response.status_code == 200, user_response.text
-        user = json.loads(user_response.text)
         response = client.post("/login", headers=valid_headers)
         assert response.status_code == 200, response.text
-        assert json.loads(response.text)['access_token']
-        jwt_payload = jwt.decode(json.loads(response.text)['access_token'], symmetric_key,
-                                 algorithms=[symmetric_algorithm])
-        assert jwt_payload['user_id'] == user['_id']
 
 
 def test_unregister(register_model: RegisterModel, asymmetric_algorithm):
@@ -83,3 +82,16 @@ def test_unregister(register_model: RegisterModel, asymmetric_algorithm):
         assert response.status_code == 401, response.text
         response = client.post("/unregister", headers=valid_headers)
         assert response.status_code == 200, response.text
+
+
+def test_sso_registration(register_model, asymmetric_algorithm):
+    async def override_dependency():
+        return {"sso_user_id": "619b5ecad44afe99430824d3", "email": "mock@mock.com", "name": "test"}
+
+    app.dependency_overrides[sso_token_decode] = override_dependency
+    with client:
+        token = "Bearer %s" % create_token(register_model.dict(), Settings.private_key, asymmetric_algorithm)
+        valid_headers = {"Authorization": token}
+        response = client.post("/register", data=register_model.json(), headers=valid_headers)
+        assert response.status_code == 401, response.text
+

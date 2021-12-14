@@ -1,4 +1,3 @@
-
 import requests
 
 from awesome_sso.service.settings import Settings
