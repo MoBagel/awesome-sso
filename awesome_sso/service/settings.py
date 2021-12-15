@@ -10,7 +10,7 @@ class Settings(Generic[AwesomeUserType]):
     sso_domain: AnyHttpUrl
     service_name: Optional[str] = None
     public_key: str = ""
-    private_key: str = ""
+    private_key: Optional[str] = ""
     symmetric_key: str = ""
     user_model: Type[AwesomeUserType]
 
@@ -21,7 +21,7 @@ class Settings(Generic[AwesomeUserType]):
         user_model: Type[AwesomeUserType],
         service_name: str,
         public_key: str,
-        private_key: str,
+        private_key: Optional[str] = "",
         sso_domain: str = "http://sso-be:3500/api/sso",
     ):
         cls.user_model = user_model

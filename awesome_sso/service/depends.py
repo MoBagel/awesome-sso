@@ -63,10 +63,10 @@ async def sso_user(user_email: EmailStr = Depends(sso_user_email)) -> AwesomeUse
     return user
 
 
-async def jwt_token_decode(sso: str = Cookie(None)) -> JWTPayload:
+async def jwt_token_decode(eightpoint: str = Cookie(None)) -> JWTPayload:
     try:
         payload = jwt.decode(
-            sso, Settings.symmetric_key, algorithms=[SYMMETRIC_ALGORITHM]
+            eightpoint, Settings.symmetric_key, algorithms=[SYMMETRIC_ALGORITHM]
         )
     except Exception as e:
         environment = os.environ.get("ENV")
