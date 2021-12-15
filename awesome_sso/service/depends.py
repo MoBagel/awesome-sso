@@ -72,13 +72,13 @@ async def jwt_token_decode(eightpoint: str = Cookie(None)) -> JWTPayload:
         environment = os.environ.get("ENV")
         if environment is None or environment == "":
             logger.warning("using mock user")
-            payload = {"user_id": MOCK_USER_ID}
+            payload = {"sso_user_id": MOCK_USER_ID}
         else:
             logger.warning(e)
             raise Unauthorized(str(e))
 
     try:
-        jwt_payload = JWTPayload(sso_user_id=PydanticObjectId(payload["user_id"]))
+        jwt_payload = JWTPayload(sso_user_id=PydanticObjectId(payload["sso_user_id"]))
     except Exception as e:
         raise Unauthorized(str(e))
     return jwt_payload
