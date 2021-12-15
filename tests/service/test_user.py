@@ -25,4 +25,3 @@ async def test_child_user(register_model):
     assert user.sso_user_id == register_model.sso_user_id
     assert user.dict()['fantastic']
 
-

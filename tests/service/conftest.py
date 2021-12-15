@@ -4,7 +4,9 @@ from typing import List
 
 import pytest
 from beanie import PydanticObjectId
+from pydantic import EmailStr
 
+from awesome_sso.service.depends import JWTPayload
 from awesome_sso.service.user.schema import RegisterModel, ConfigOption, ConfigType, ConfigConstraint
 
 
@@ -53,3 +55,18 @@ def config_options() -> List[ConfigOption]:
 @pytest.fixture
 def hostname() -> str:
     return 'test.com'
+
+
+@pytest.fixture
+def email() -> EmailStr:
+    return EmailStr('test@test.com')
+
+
+@pytest.fixture
+def jwt_payload() -> JWTPayload:
+    return JWTPayload(sso_user_id=PydanticObjectId())
+
+
+@pytest.fixture
+def object_id() -> PydanticObjectId:
+    return PydanticObjectId()

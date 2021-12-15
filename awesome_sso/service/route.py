@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import Type
 
 from fastapi import APIRouter, Depends, Response
 from fastapi.logger import logger
@@ -8,6 +7,7 @@ from awesome_sso.exceptions import BadRequest, HTTPException, InternalServerErro
 from awesome_sso.service.depends import (
     JWTPayload,
     sso_registration,
+    sso_token_decode,
     sso_user,
     sso_user_email,
 )
@@ -34,18 +34,17 @@ async def register(register_model: RegisterModel = Depends(sso_registration)):
         else:
             raise BadRequest(message="user email %s taken" % register_model.email)
     except HTTPException as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         raise e
     except Exception as e:
-        logger.warn(str(e))
+        logger.warning(str(e))
         raise InternalServerError(message=str(e))
     return user
 
 
 @router.post("/login", summary="get login access token", response_model=AccessToken)
-async def login(user: Type[AwesomeUserType] = Depends(sso_user)):
-    jwt_payload = JWTPayload(user_id=user.id).dict()
-    jwt_payload["user_id"] = str(jwt_payload["user_id"])
+async def login(user: AwesomeUserType = Depends(sso_user)):
+    jwt_payload = {"sso_user_id": str(user.sso_user_id)}
     token = create_token(
         jwt_payload,
         Settings.symmetric_key,
@@ -57,7 +56,9 @@ async def login(user: Type[AwesomeUserType] = Depends(sso_user)):
 
 @router.post("/unregister")
 async def unregister(email: str = Depends(sso_user_email)):
-    user = await Settings[AwesomeUserType]().user_model.find_one(Settings[AwesomeUserType]().user_model.email == email)  # type: ignore
+    user = await Settings[AwesomeUserType]().user_model.find_one(  # type: ignore
+        Settings[AwesomeUserType]().user_model.email == email  # type: ignore
+    )
     if user is None:
         return Response(status_code=200, content="requested user not exist")
     else:
