@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from fastapi import APIRouter, Depends, Response
 from fastapi.logger import logger
 
@@ -6,10 +8,12 @@ from awesome_sso.service.depends import (
     JWTPayload,
     sso_registration,
     sso_token_decode,
+    sso_user,
     sso_user_email,
 )
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import AwesomeUserType, RegisterModel
+from awesome_sso.service.user.schema import AccessToken, AwesomeUserType, RegisterModel
+from awesome_sso.util.jwt import SYMMETRIC_ALGORITHM, create_token
 
 router = APIRouter(tags=["sso"])
 
@@ -38,9 +42,16 @@ async def register(register_model: RegisterModel = Depends(sso_registration)):
     return user
 
 
-@router.post("/login", summary="authenticate user")
-async def login(payload: JWTPayload = Depends(sso_token_decode)):
-    return "authenticated"
+@router.post("/login", summary="get login access token", response_model=AccessToken)
+async def login(user: AwesomeUserType = Depends(sso_user)):
+    jwt_payload = {"sso_user_id": str(user.sso_user_id)}
+    token = create_token(
+        jwt_payload,
+        Settings.symmetric_key,
+        SYMMETRIC_ALGORITHM,
+        expires_delta=timedelta(days=7),
+    )
+    return AccessToken(access_token=token)
 
 
 @router.post("/unregister")

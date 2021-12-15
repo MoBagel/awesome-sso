@@ -8,11 +8,11 @@ from fastapi.logger import logger
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, EmailStr
 
-from awesome_sso.exceptions import NotFound, Unauthorized
+from awesome_sso.exceptions import BadRequest, NotFound, Unauthorized
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AwesomeUserType, RegisterModel
 from awesome_sso.util.constant import MOCK_USER_ID
-from awesome_sso.util.jwt import ASYMMETRIC_ALGORITHM
+from awesome_sso.util.jwt import ASYMMETRIC_ALGORITHM, SYMMETRIC_ALGORITHM
 
 security = HTTPBearer()
 
@@ -50,7 +50,7 @@ async def sso_registration(
 def sso_user_email(payload: dict = Depends(sso_token_decode)) -> EmailStr:
     if "email" not in payload:
         logger.warning(payload)
-        raise NotFound("email not found")
+        raise BadRequest("email not found")
     return payload["email"]
 
 
@@ -66,7 +66,7 @@ async def sso_user(user_email: EmailStr = Depends(sso_user_email)) -> AwesomeUse
 async def jwt_token_decode(sso: str = Cookie(None)) -> JWTPayload:
     try:
         payload = jwt.decode(
-            sso, Settings.public_key, algorithms=[ASYMMETRIC_ALGORITHM]
+            sso, Settings.symmetric_key, algorithms=[SYMMETRIC_ALGORITHM]
         )
     except Exception as e:
         environment = os.environ.get("ENV")
@@ -89,7 +89,7 @@ def sso_user_id(
 ) -> PydanticObjectId:
     if payload.sso_user_id is None:
         logger.warning(payload)
-        raise NotFound("sso user id not found")
+        raise BadRequest("sso user id not found")
     return payload.sso_user_id
 
 

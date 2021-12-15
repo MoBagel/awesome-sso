@@ -43,6 +43,10 @@ class Service(BaseModel):
     config_options: List[ConfigOption] = []
 
 
+class AccessToken(BaseModel):
+    access_token: str
+
+
 class RegisterModel(BaseModel):
     name: str
     email: EmailStr

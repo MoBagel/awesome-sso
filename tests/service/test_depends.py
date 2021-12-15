@@ -1,8 +1,8 @@
 import pytest
 from beanie import PydanticObjectId
-from pydantic import EmailStr, AnyHttpUrl
+from pydantic import AnyHttpUrl
 
-from awesome_sso.exceptions import NotFound
+from awesome_sso.exceptions import NotFound, BadRequest
 from awesome_sso.service.depends import sso_user_email, sso_user, JWTPayload, sso_user_id, get_current_user
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import RegisterModel, AwesomeUser
@@ -27,7 +27,7 @@ async def registered_user(register_model: RegisterModel) -> AwesomeUser:
 def test_sso_user_email(register_model: RegisterModel):
     email = sso_user_email(register_model.dict())
     assert email == register_model.email
-    with pytest.raises(NotFound):
+    with pytest.raises(BadRequest):
         sso_user_email({})
 
 
@@ -39,7 +39,7 @@ async def test_sso_user(registered_user: AwesomeUser, register_model: RegisterMo
 def test_sso_user_id(jwt_payload: JWTPayload):
     test_user_id = sso_user_id(jwt_payload)
     assert test_user_id == jwt_payload.sso_user_id
-    with pytest.raises(NotFound):
+    with pytest.raises(BadRequest):
         sso_user_id(JWTPayload())
 
 
