@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: PyPI Upload
+    name: release
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -29,14 +31,20 @@ jobs:
 
       - name: Update Version
         run: |
-          git checkout -b release-$GITHUB_REF develop
-          poetry version $GITHUB_REF
-          git commit -m 'Bumped version to $GITHUB_REF' pyproject.toml
+          git checkout -b release/$GITHUB_REF_NAME
+          poetry version $GITHUB_REF_NAME
+          git config --global user.email "mobagel@github.com"
+          git config --global user.name "MoBagel"
+          git commit -m "Bumped version to $GITHUB_REF_NAME" pyproject.toml
+          git push origin release/$GITHUB_REF_NAME
+          git tag -d $GITHUB_REF_NAME
+          git push --delete origin $GITHUB_REF_NAME
+          git tag $GITHUB_REF_NAME
+          git push origin $GITHUB_REF_NAME
           git checkout develop
-          git merge --no-ff release-$GITHUB_REF
-          git push origin release-$GITHUB_REF
+          git merge --no-ff release/$GITHUB_REF_NAME -m"merge release $GITHUB_REF_NAME"
           git push origin develop
-          git checkout release-$GITHUB_REF
+          git checkout release/$GITHUB_REF_NAME
 
       - name: Install dependencies
         run: poetry build
