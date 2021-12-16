@@ -27,7 +27,7 @@ def register_service(
     )
     registration_url = Settings.sso_domain + "/register"
     try:
-        resp = requests.post(registration_url, json=service.dict())
+        resp = requests.post(registration_url, json=service.dict(), timeout=5)
         resp.close()
         response_error_check(resp)
     except Exception as e:
@@ -40,7 +40,7 @@ def unregister_service():
             Settings.sso_domain + "/unregister?service_name=%s" % Settings.service_name
         )
         try:
-            resp = requests.post(unregister_url)
+            resp = requests.post(unregister_url, timeout=5)
             resp.close()
             response_error_check(resp)
         except Exception as e:

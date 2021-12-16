@@ -6,7 +6,7 @@ from awesome_sso.service.user.schema import AwesomeUserType
 
 async def sync_user(user: AwesomeUserType):
     resp = requests.get(
-        "%s/user" % Settings.sso_domain, params={"user_id": str(user.sso_user_id)}
+        "%s/user" % Settings.sso_domain, params={"user_id": str(user.sso_user_id)}, timeout=5
     )
     resp.close()
     if resp.status_code / 2 != 100:
