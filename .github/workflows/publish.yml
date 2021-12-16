@@ -1,9 +1,9 @@
-name: pypi_upload
+name: publish
 
 on:
-  push:
-    branches:
-      - 'master'
+  release:
+    types:
+      - created
 
 jobs:
   build:
@@ -27,6 +27,17 @@ jobs:
         with:
           poetry-version: ${{ matrix.poetry-version }}
 
+      - name: Update Version
+        run: |
+          git checkout -b release-$GITHUB_REF develop
+          poetry version $GITHUB_REF
+          git commit -m 'Bumped version to $GITHUB_REF' pyproject.toml
+          git checkout develop
+          git merge --no-ff release-$GITHUB_REF
+          git push origin release-$GITHUB_REF
+          git push origin develop
+          git checkout release-$GITHUB_REF
+
       - name: Install dependencies
         run: poetry build
 
@@ -36,4 +47,3 @@ jobs:
         run: |
           rm -rf dist
           poetry publish --build --username __token__ --password $PYPI_TOKEN
-
