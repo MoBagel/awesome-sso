@@ -1,0 +1,57 @@
+name: publish
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    name: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8"]
+        poetry-version: [1.1.11]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+
+      - name: Update Version
+        run: |
+          git checkout -b release/$GITHUB_REF_NAME
+          poetry version $GITHUB_REF_NAME
+          git config --global user.email "mobagel@github.com"
+          git config --global user.name "MoBagel"
+          git commit -m "Bumped version to $GITHUB_REF_NAME" pyproject.toml
+          git push origin release/$GITHUB_REF_NAME
+          git tag -d $GITHUB_REF_NAME
+          git push --delete origin $GITHUB_REF_NAME
+          git tag $GITHUB_REF_NAME
+          git push origin $GITHUB_REF_NAME
+          git checkout develop
+          git merge --no-ff release/$GITHUB_REF_NAME -m"merge release $GITHUB_REF_NAME"
+          git push origin develop
+          git checkout release/$GITHUB_REF_NAME
+
+      - name: Install dependencies
+        run: poetry build
+
+      - name: Build and publish package
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          rm -rf dist
+          poetry publish --build --username __token__ --password $PYPI_TOKEN

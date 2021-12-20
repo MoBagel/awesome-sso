@@ -172,6 +172,8 @@ then open the api doc, you will see the apis in `awesome_sso.service.user.route`
 
 ### Releasing
 
-1. update version in `pyproject.toml`.
-2. merge to master, and a release pipeline will be triggered. A package with version specified in `pyproject.toml`
-   will be pushed to pypi.
+1. [create new release](https://github.com/MoBagel/awesome-sso/releases/new) on github.
+2. Select tags, target branch is `develop`, and create the new desired tag.
+3. Auto generate notes, and review release note. 
+4. Publish release
+
