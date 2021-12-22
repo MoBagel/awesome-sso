@@ -24,7 +24,7 @@ async def service_name() -> str:
 
 @pytest.fixture
 def sso_domain() -> str:
-    return "http://sso-be:3500/api/sso"
+    return "http://localhost:3500/api/sso"
 
 
 @pytest.fixture
@@ -54,7 +54,7 @@ def config_options() -> List[ConfigOption]:
 
 @pytest.fixture
 def hostname() -> str:
-    return 'test.com'
+    return 'localhost'
 
 
 @pytest.fixture
