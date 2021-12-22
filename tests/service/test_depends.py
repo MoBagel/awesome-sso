@@ -3,9 +3,10 @@ from beanie import PydanticObjectId
 from pydantic import AnyHttpUrl
 
 from awesome_sso.exceptions import NotFound, BadRequest
-from awesome_sso.service.depends import sso_user_email, sso_user, JWTPayload, sso_user_id, get_current_user
+from awesome_sso.service.depends import sso_user_email, sso_user, JWTPayload, sso_user_id, get_current_user, jwt_token_decode
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import RegisterModel, AwesomeUser
+from awesome_sso.util.constant import MOCK_USER_ID
 from tests.conftest import init_mongo
 
 settings: Settings = Settings()
@@ -48,3 +49,8 @@ async def test_get_current_user(registered_user: AwesomeUser):
     assert user.id == registered_user.id
     with pytest.raises(NotFound):
         await get_current_user(PydanticObjectId())
+
+
+async def test_token_decode(registered_user: AwesomeUser):
+    jwt_payload = await jwt_token_decode("")
+    assert str(jwt_payload.sso_user_id) == MOCK_USER_ID
