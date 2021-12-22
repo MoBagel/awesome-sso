@@ -172,8 +172,10 @@ then open the api doc, you will see the apis in `awesome_sso.service.user.route`
 
 ### Releasing
 
-1. [create new release](https://github.com/MoBagel/awesome-sso/releases/new) on github.
-2. Select tags, target branch is `develop`, and create the new desired tag.
-3. Auto generate notes, and review release note. 
-4. Publish release
+1. `poetry version [new_version]`
+2. `git commit -m"Bump version"`
+3. `git push origin develop`
+4. [create new release](https://github.com/MoBagel/awesome-sso/releases/new) on github.
+5. Create release off develop branch, auto generate notes, and review release note. 
+6. Publish release
 
