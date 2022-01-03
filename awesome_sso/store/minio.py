@@ -1,12 +1,17 @@
 import glob
-import io
 import json
+from io import BytesIO, StringIO
 from logging import Logger
 from os import path
 from typing import IO, Optional
 
-from minio import Minio
+import pandas as pd
+from fastapi import UploadFile
+from fastapi.logger import logger
+from minio import Minio, S3Error
 from minio.deleteobjects import DeleteObject
+
+from awesome_sso.exceptions import UnprocessableEntity
 
 
 class MinioStore:
@@ -63,7 +68,7 @@ class MinioStore:
     def put_as_json(self, name: str, data: dict):
         data_json = json.dumps(data)
         data_bytes = data_json.encode("utf-8")
-        data_byte_stream = io.BytesIO(data_bytes)
+        data_byte_stream = BytesIO(data_bytes)
         length = len(data_byte_stream.read())
         data_byte_stream.seek(0)
         self.client.put_object(
@@ -93,3 +98,53 @@ class MinioStore:
 
     def remove_object(self, name: str):
         self.client.remove_object(self.bucket, name)
+
+    def upload_df(self, df: pd.DataFrame, name: str):
+        csv_bytes = df.to_csv(index=False).encode("utf-8")
+        csv_buffer = BytesIO(csv_bytes)
+        self.put(name, csv_buffer, content_type="application/csv")
+
+    def fget_df(
+        self,
+        file: UploadFile,
+        column_types: dict = {},
+        date_column: Optional[str] = None,
+    ) -> Optional[pd.DataFrame]:
+        try:
+            file_io = StringIO(str(file.file.read(), "utf-8"))
+            if date_column is None:
+                df = pd.read_csv(file_io, dtype=column_types)
+            else:
+                df = pd.read_csv(file_io, dtype=column_types, parse_dates=[date_column])
+            file_io.close()
+        except Exception as e:
+            logger.warning(UnprocessableEntity("unable to read csv %s" % str(e)))
+            return None
+        return df
+
+    def get_json(self, file_path: str) -> dict:
+        try:
+            file_obj = self.get(file_path)
+        except S3Error as e:
+            logger.warning(e)
+            return {}
+        result = json.load(file_obj)
+        file_obj.close()
+        file_obj.release_conn()
+        return result
+
+    def get_df(
+        self, file_path: str, column_types: dict = {}, date_column: Optional[str] = None
+    ) -> Optional[pd.DataFrame]:
+        try:
+            file_obj = self.get(file_path)
+        except S3Error as e:
+            logger.warning(e)
+            return None
+        if date_column is None:
+            df = pd.read_csv(file_obj, dtype=column_types)
+        else:
+            df = pd.read_csv(file_obj, parse_dates=[date_column], dtype=column_types)
+        file_obj.close()
+        file_obj.release_conn()
+        return df

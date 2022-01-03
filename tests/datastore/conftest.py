@@ -1,11 +1,17 @@
 import pytest
 
 from awesome_sso.store.minio import MinioStore
+from tests.datastore import generate_fake_dataframe
 
 
 @pytest.fixture()
 def test_string():
     return b'to grasp how wide and long and high and deep is the love of Christ'
+
+
+@pytest.fixture()
+def test_dataframe():
+    return generate_fake_dataframe(size=100, cols="cicid")
 
 
 @pytest.fixture()
