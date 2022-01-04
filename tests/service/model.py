@@ -15,5 +15,5 @@ class UserWithExtraParameter(AwesomeUser):
     extra: ExtraParameter
 
     @classmethod
-    def extra_constructor_params(cls, args) -> dict:
+    async def extra_constructor_params(cls, args) -> dict:
         return {"extra": ExtraParameter(nickname=args.name)}
