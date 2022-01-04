@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from beanie import DeleteRules
 from fastapi import APIRouter, Depends, Response
 from fastapi.logger import logger
 
@@ -57,5 +58,5 @@ async def unregister(email: str = Depends(sso_user_email)):
         return Response(status_code=200, content="requested user not exist")
     else:
         await user.delete_data()
-        await user.delete()
+        await user.delete(link_rule=DeleteRules.DELETE_LINKS)
         return Response(status_code=200, content="user unregistered")
