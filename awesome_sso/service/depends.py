@@ -56,7 +56,7 @@ def sso_user_email(payload: dict = Depends(sso_token_decode)) -> EmailStr:
 
 async def sso_user(user_email: EmailStr = Depends(sso_user_email)) -> AwesomeUserType:
     user = await Settings[AwesomeUserType]().user_model.find_one(
-        Settings[AwesomeUserType]().user_model.email == user_email
+        Settings[AwesomeUserType]().user_model.email == user_email, fetch_links=True
     )
     if user is None:
         raise NotFound("user not found")
@@ -97,7 +97,7 @@ async def get_current_user(
     sso_id: PydanticObjectId = Depends(sso_user_id),
 ) -> AwesomeUserType:
     user = await Settings[AwesomeUserType]().user_model.find_one(
-        Settings[AwesomeUserType]().user_model.sso_user_id == sso_id
+        Settings[AwesomeUserType]().user_model.sso_user_id == sso_id, fetch_links=True
     )
     if user is None:
         raise NotFound("user not found")
