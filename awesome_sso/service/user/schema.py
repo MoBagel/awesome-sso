@@ -69,10 +69,11 @@ class AwesomeUser(Document):
     async def register(
         cls: Type[AwesomeUserType], args: RegisterModel
     ) -> AwesomeUserType:
-        return await cls(**args.dict(), **cls.extra_constructor_params(args)).create()
+        extra_params = await cls.extra_constructor_params(args)
+        return await cls(**args.dict(), **extra_params).create()
 
     @classmethod
-    def extra_constructor_params(
+    async def extra_constructor_params(
         cls: Type[AwesomeUserType], args: RegisterModel
     ) -> dict:
         return {}
