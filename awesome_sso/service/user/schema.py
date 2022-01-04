@@ -69,9 +69,13 @@ class AwesomeUser(Document):
     async def register(
         cls: Type[AwesomeUserType], args: RegisterModel
     ) -> AwesomeUserType:
-        return await cls(
-            name=args.name, email=args.email, sso_user_id=args.sso_user_id
-        ).create()
+        return await cls(**args.dict(), **cls.extra_constructor_params(args)).create()
+
+    @classmethod
+    def extra_constructor_params(
+        cls: Type[AwesomeUserType], args: RegisterModel
+    ) -> dict:
+        return {}
 
     async def delete_data(self):
         pass

@@ -2,7 +2,7 @@ import pytest
 
 from awesome_sso.service.user.schema import AwesomeUser
 from tests.conftest import init_mongo
-from tests.service.model import FantasticUser
+from tests.service.model import FantasticUser, UserWithExtraParameter
 
 
 @pytest.fixture(autouse=True)
@@ -25,3 +25,10 @@ async def test_child_user(register_model):
     assert user.sso_user_id == register_model.sso_user_id
     assert user.dict()['fantastic']
 
+
+async def test_child_user_with_extra_param(register_model):
+    user: UserWithExtraParameter = await UserWithExtraParameter.register(register_model)
+    assert user.name == register_model.name
+    assert user.email == register_model.email
+    assert user.sso_user_id == register_model.sso_user_id
+    assert user.extra.nickname == register_model.name
