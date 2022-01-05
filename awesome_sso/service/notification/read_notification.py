@@ -1,7 +1,7 @@
 import requests
 from beanie import PydanticObjectId
 
-from awesome_sso.service.notification import UserNotificationListResponse
+from awesome_sso.service.notification.schema import UserNotificationListResponse
 from awesome_sso.service.settings import Settings
 
 
