@@ -9,7 +9,7 @@ async def read_notification(
     sso_user_id: PydanticObjectId, notification_id: PydanticObjectId
 ) -> UserNotificationListResponse:
     resp = requests.post(
-        "%s/notification" % Settings.sso_domain,
+        "%s/notification/read" % Settings.sso_domain,
         params={"user_id": str(sso_user_id), notification_id: str(notification_id)},
         timeout=5,
     )
