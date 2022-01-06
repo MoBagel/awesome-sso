@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Optional, Any, Dict, List
 
 from beanie import PydanticObjectId
 from pydantic import BaseModel
