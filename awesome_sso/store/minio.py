@@ -78,7 +78,7 @@ class MinioStore:
         if not length:
             length = len(data.read())
             data.seek(0)
-        
+
         try:
             self.client.put_object(
                 self.bucket, name, data, length, content_type=content_type
@@ -182,7 +182,7 @@ class MinioStore:
         objects_to_delete = [DeleteObject(name) for name in names]
         for del_err in self.client.remove_objects(self.bucket, objects_to_delete):
             self.logger.warning("Deletion Error: %s", del_err)
-            
+
     def download(self, name: str, file_path: str):
         """Downloads data of an object to file."""
         self.client.fget_object(self.bucket, name, file_path)
