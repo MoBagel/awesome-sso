@@ -40,6 +40,19 @@ class MinioStore:
         else:
             self.logger.info("bucket '%s' exists", self.bucket)
 
+    def list_buckets(self):
+        """List information of all accessible buckets with text."""
+        return [x.name for x in self.client.list_buckets()]
+
+    def list_objects(self, prefix: str = None, recursive: bool = False):
+        """Lists object information of a bucket with text."""
+        return [
+            x.object_name
+            for x in self.client.list_objects(
+                self.bucket, prefix=prefix, recursive=recursive
+            )
+        ]
+
     def fput(self, name: str, file_path: str):
         if path.isdir(file_path):
             for local_file in glob.glob(file_path + "/**"):
