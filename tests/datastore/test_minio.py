@@ -1,3 +1,4 @@
+import os
 import json
 import tempfile
 
@@ -5,7 +6,7 @@ from fastapi import UploadFile
 
 
 def test_bucket_creation(minio_store):
-    buckets = minio_store.client.list_buckets()
+    buckets = minio_store.list_buckets()
     assert 'test' in buckets
 
 
@@ -48,6 +49,20 @@ def test_put_and_get_json(minio_store, test_dict):
     assert len(begotten) == 0
 
 
+def test_put_get_and_download_df(minio_store, test_dataframe):
+    minio_store.put_as_df("test.csv", test_dataframe)
+    df = minio_store.get_df("test.csv")
+    assert df.shape[0] == 100
+    df = minio_store.get_df("test.csv", date_column_list=["column_4_date"])
+    assert df.shape[0] == 100
+    df = minio_store.get_df("not_exist.csv", date_column_list=["column_4_date"])
+    assert df is None
+
+    minio_store.download("test.csv", "test.csv")
+    assert os.path.exists("test.csv")
+    os.remove("test.csv")
+
+
 def test_remove_object_and_dir(minio_store, test_dict):
     minio_store.put_as_json('dict.json', test_dict)
     minio_store.put_as_json('tmp/dict.json', test_dict)
@@ -57,16 +72,6 @@ def test_remove_object_and_dir(minio_store, test_dict):
     assert minio_store.exists('dict.json') is False
     minio_store.remove_dir('tmp')
     assert minio_store.exists('tmp/dict.json') is False
-
-
-def test_upload_and_get_df(minio_store, test_dataframe):
-    minio_store.upload_df(test_dataframe, "test.csv")
-    df = minio_store.get_df("test.csv")
-    assert df.shape[0] == 100
-    df = minio_store.get_df("test.csv", date_column="column_4_date")
-    assert df.shape[0] == 100
-    df = minio_store.get_df("not_exist.csv", date_column="column_4_date")
-    assert df is None
 
 
 async def test_fget_df(minio_store, test_dataframe):
