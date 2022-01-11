@@ -3,6 +3,7 @@ import json
 from io import BytesIO, StringIO
 from logging import Logger
 from os import path
+from pathlib import Path
 from typing import IO, List, Optional
 
 import pandas as pd
@@ -57,7 +58,7 @@ class MinioStore:
         """Uploads data from a file/folder to an object in a bucket."""
         if path.isdir(file_path):
             for local_file in glob.glob(file_path + "/**"):
-                file_name = local_file[1 + len(file_path) :]
+                file_name = Path(local_file).name
                 remote_path = path.join(name, file_name)
 
                 if file_name in exclude_files:
