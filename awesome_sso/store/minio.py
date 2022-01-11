@@ -160,7 +160,7 @@ class MinioStore:
         self,
         name: str,
         column_types: dict = {},
-        date_column_list: Optional[list] = [],
+        date_column_list: List[str] = [],
     ) -> Optional[pd.DataFrame]:
         """Gets data of an object and return a dataframe."""
         try:
