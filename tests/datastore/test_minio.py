@@ -27,7 +27,8 @@ def test_fput(minio_store, test_string):
                 file_name2 = file2.name[1 + len(dir) :]
                 file2.write(test_string)
                 file2.flush()
-                minio_store.fput(dir, dir, exclude_files=[file_name2])
+                with tempfile.TemporaryDirectory(dir=dir) as tmp_dir:
+                    minio_store.fput(dir, dir, exclude_files=[file_name2])
 
     assert minio_store.exists(file1.name)
     assert minio_store.exists(file2.name) is False
@@ -82,7 +83,7 @@ def test_remove_object_objects_and_dir(minio_store, test_dict):
     assert minio_store.exists("dict0.json") is False
 
     # test remove objects
-    minio_store.remove_objects(["dict1.json", "dict2.json"])
+    minio_store.remove_objects(["dict1.json", "dict2.json", "dict3.json"])
 
     assert minio_store.exists("dict1.json") is False
     assert minio_store.exists("dict2.json") is False
