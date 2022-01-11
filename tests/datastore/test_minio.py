@@ -20,11 +20,17 @@ def test_fput(minio_store, test_string):
     begotten.release_conn()
 
     with tempfile.TemporaryDirectory() as dir:
-        with tempfile.NamedTemporaryFile(dir=dir) as file:
-            file.write(test_string)
-            file.flush()
-            minio_store.fput(dir, dir)
-    assert minio_store.exists(file.name)
+        with tempfile.NamedTemporaryFile(dir=dir) as file1:
+            file1.write(test_string)
+            file1.flush()
+            with tempfile.NamedTemporaryFile(dir=dir) as file2:
+                file_name2 = file2.name[1 + len(dir) :]
+                file2.write(test_string)
+                file2.flush()
+                minio_store.fput(dir, dir, exclude_files=[file_name2])
+
+    assert minio_store.exists(file1.name)
+    assert minio_store.exists(file2.name) is False
 
 
 def test_put(minio_store, test_string):

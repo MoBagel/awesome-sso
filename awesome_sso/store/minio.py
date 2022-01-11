@@ -57,12 +57,15 @@ class MinioStore:
         """Uploads data from a file/folder to an object in a bucket."""
         if path.isdir(file_path):
             for local_file in glob.glob(file_path + "/**"):
-                if local_file in exclude_files:
+                file_name = local_file[1 + len(file_path) :]
+                remote_path = path.join(name, file_name)
+
+                if file_name in exclude_files:
+                    print(f"exclude: {local_file}")
                     continue
                 if not path.isfile(local_file):
-                    self.fput(local_file, name + "/" + path.basename(local_file))
+                    self.fput(remote_path, local_file)
                 else:
-                    remote_path = path.join(name, local_file[1 + len(file_path) :])
                     self.client.fput_object(self.bucket, remote_path, local_file)
         else:
             self.client.fput_object(self.bucket, name, file_path)
