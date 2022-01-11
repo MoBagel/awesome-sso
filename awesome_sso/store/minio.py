@@ -59,14 +59,13 @@ class MinioStore:
         if path.isdir(file_path):
             for local_file in glob.glob(file_path + "/**"):
                 file_name = Path(local_file).name
-                remote_path = path.join(name, file_name)
-
                 if file_name in exclude_files:
                     self.logger.info(f"exclude: {local_file}")
                     continue
                 if not path.isfile(local_file):
-                    self.fput(remote_path, local_file)
+                    self.fput(local_file, name + "/" + path.basename(local_file))
                 else:
+                    remote_path = path.join(name, local_file[1 + len(file_path) :])
                     self.client.fput_object(self.bucket, remote_path, local_file)
         else:
             self.client.fput_object(self.bucket, name, file_path)
