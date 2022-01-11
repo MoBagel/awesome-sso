@@ -61,7 +61,7 @@ class MinioStore:
                 remote_path = path.join(name, file_name)
 
                 if file_name in exclude_files:
-                    print(f"exclude: {local_file}")
+                    self.logger.info(f"exclude: {local_file}")
                     continue
                 if not path.isfile(local_file):
                     self.fput(remote_path, local_file)
