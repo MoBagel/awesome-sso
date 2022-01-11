@@ -79,12 +79,9 @@ class MinioStore:
             length = len(data.read())
             data.seek(0)
 
-        try:
-            self.client.put_object(
-                self.bucket, name, data, length, content_type=content_type
-            )
-        except S3Error as e:
-            logger.warning(e)
+        self.client.put_object(
+            self.bucket, name, data, length, content_type=content_type
+        )
 
     def put_as_json(self, name: str, data: dict):
         """Uploads data from a json to an object in a bucket."""
@@ -109,10 +106,7 @@ class MinioStore:
         """Remove folder."""
         self.logger.warning("removing %s", folder)
         objects_to_delete = self.list_objects(prefix=folder, recursive=True)
-
-        objects_to_delete += folder
         self.logger.warning("Removing: %s", objects_to_delete)
-
         self.remove_objects(objects_to_delete)
 
     def remove_object(self, name: str):
@@ -166,7 +160,7 @@ class MinioStore:
         try:
             file_obj = self.get(name)
         except S3Error as e:
-            logger.warning(e)
+            self.logger.warning(e)
             return None
 
         if not date_column_list:
