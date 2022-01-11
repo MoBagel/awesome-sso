@@ -68,6 +68,7 @@ class MinioStore:
                 if not path.isfile(local_file):
                     self.fput(remote_path, local_file, exclude_files)
                 else:
+                    remote_path = path.join(name, local_file[1 + len(file_path) :])
                     self.client.fput_object(self.bucket, remote_path, local_file)
         else:
             self.client.fput_object(self.bucket, name, file_path)
