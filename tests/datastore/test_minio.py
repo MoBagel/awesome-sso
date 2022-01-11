@@ -49,7 +49,7 @@ def test_put_and_get_json(minio_store, test_dict):
 
 
 def test_put_get_and_download_df(minio_store, test_dataframe):
-    minio_store.put_as_df("test.csv", test_dataframe)
+    minio_store.upload_df("test.csv", test_dataframe)
     df = minio_store.get_df("test.csv")
     assert df.shape[0] == 100
     df = minio_store.get_df("test.csv", date_column_list=["column_4_date"])

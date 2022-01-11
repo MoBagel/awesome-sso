@@ -113,7 +113,7 @@ class MinioStore:
         """Remove an object."""
         self.client.remove_object(self.bucket, name)
 
-    def put_as_df(self, name: str, data: pd.DataFrame):
+    def upload_df(self, name: str, data: pd.DataFrame):
         """Uploads data from a pandas dataframe to an object in a bucket."""
         data_bytes = data.to_csv(index=False).encode("utf-8")
         data_byte_stream = BytesIO(data_bytes)
@@ -134,7 +134,7 @@ class MinioStore:
                 df = pd.read_csv(file_io, dtype=column_types, parse_dates=[date_column])
             file_io.close()
         except Exception as e:
-            logger.warning(UnprocessableEntity("unable to read csv %s" % str(e)))
+            self.logger.warning(UnprocessableEntity("unable to read csv %s" % str(e)))
             return None
         return df
 
@@ -143,7 +143,7 @@ class MinioStore:
         try:
             file_obj = self.get(name)
         except S3Error as e:
-            logger.warning(e)
+            self.logger.warning(e)
             return {}
         result = json.load(file_obj)
         file_obj.close()
