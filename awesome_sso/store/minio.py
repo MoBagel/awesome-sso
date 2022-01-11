@@ -3,7 +3,7 @@ import json
 from io import BytesIO, StringIO
 from logging import Logger
 from os import path
-from typing import IO, Optional
+from typing import IO, List, Optional
 
 import pandas as pd
 from fastapi import UploadFile
@@ -53,11 +53,11 @@ class MinioStore:
             )
         ]
 
-    def fput(self, name: str, file_path: str):
+    def fput(self, name: str, file_path: str, exclude_files: List[str] = []):
         """Uploads data from a file/folder to an object in a bucket."""
         if path.isdir(file_path):
             for local_file in glob.glob(file_path + "/**"):
-                if local_file in ["__pycache__"]:
+                if local_file in exclude_files:
                     continue
                 if not path.isfile(local_file):
                     self.fput(local_file, name + "/" + path.basename(local_file))
