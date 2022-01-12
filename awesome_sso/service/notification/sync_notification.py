@@ -19,4 +19,4 @@ async def sync_notification(
             "sync notification with sso failed. %s: "
             + str(resp.content.decode("utf-8"))
         )
-    return resp.json()
+    return UserNotificationListResponse.parse_obj(resp.json())
