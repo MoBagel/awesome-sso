@@ -16,18 +16,22 @@ class MailGun:
 
     def send_simple_message(
         self,
-        source_name: str,
-        source_email: EmailStr,
-        target_emails: List[EmailStr],
+        from_name: str,
+        from_email: EmailStr,
+        to: List[EmailStr],
         subject: str,
         text: str,
+        cc: List[EmailStr] = [],
+        bcc: List[EmailStr] = [],
     ):
         return requests.post(
             self.base_url + "/messages",
             auth=("api", self.api_key),
             data={
-                "from": "%s <%s>" % (source_name, source_email),
-                "to": target_emails,
+                "from": "%s <%s>" % (from_name, from_email),
+                "to": to,
+                "cc": cc,
+                "bcc": bcc,
                 "subject": subject,
                 "text": text,
             },
@@ -35,19 +39,23 @@ class MailGun:
 
     def send_template(
         self,
-        source_name: str,
-        source_email: EmailStr,
-        target_emails: List[EmailStr],
+        from_name: str,
+        from_email: EmailStr,
+        to: List[EmailStr],
         subject: str,
         template: str,
         data: dict,
+        cc: List[EmailStr] = [],
+        bcc: List[EmailStr] = [],
     ):
         return requests.post(
             self.base_url + "/messages",
             auth=("api", self.api_key),
             data={
-                "from": "%s <%s>" % (source_name, source_email),
-                "to": target_emails,
+                "from": "%s <%s>" % (from_name, from_email),
+                "to": to,
+                "cc": cc,
+                "bcc": bcc,
                 "subject": subject,
                 "template": template,
                 "h:X-Mailgun-Variables": json.dumps(data),
