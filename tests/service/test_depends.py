@@ -2,10 +2,17 @@ import pytest
 from beanie import PydanticObjectId
 from pydantic import AnyHttpUrl
 
-from awesome_sso.exceptions import NotFound, BadRequest
-from awesome_sso.service.depends import sso_user_email, sso_user, JWTPayload, sso_user_id, get_current_user, jwt_token_decode
+from awesome_sso.exceptions import BadRequest, NotFound
+from awesome_sso.service.depends import (
+    JWTPayload,
+    get_current_user,
+    jwt_token_decode,
+    sso_user,
+    sso_user_email,
+    sso_user_id,
+)
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import RegisterModel, AwesomeUser
+from awesome_sso.service.user.schema import AwesomeUser, RegisterModel
 from awesome_sso.util.constant import MOCK_USER_ID
 from tests.conftest import init_mongo
 
@@ -13,10 +20,23 @@ settings: Settings = Settings()
 
 
 @pytest.fixture(autouse=True)
-async def init(loop, symmetric_key: str, public_key: str, private_key: str, service_name: str, sso_domain: AnyHttpUrl):
+async def init(
+    loop,
+    symmetric_key: str,
+    public_key: str,
+    private_key: str,
+    service_name: str,
+    sso_domain: AnyHttpUrl,
+):
     await init_mongo()
-    settings.init_app(public_key=public_key, private_key=private_key, symmetric_key=symmetric_key,
-                      user_model=AwesomeUser, service_name=service_name, sso_domain=sso_domain)
+    settings.init_app(
+        public_key=public_key,
+        private_key=private_key,
+        symmetric_key=symmetric_key,
+        user_model=AwesomeUser,
+        service_name=service_name,
+        sso_domain=sso_domain,
+    )
 
 
 @pytest.fixture

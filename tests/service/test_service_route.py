@@ -1,5 +1,3 @@
-import json
-
 import jwt
 import pytest
 from fastapi import FastAPI
@@ -24,9 +22,22 @@ client = TestClient(app)
 
 
 @pytest.fixture(autouse=True)
-def init(loop, symmetric_key: str, public_key: str, private_key: str, service_name: str, sso_domain: AnyHttpUrl):
-    service_settings.init_app(symmetric_key=symmetric_key, user_model=AwesomeUser, service_name=service_name,
-                              public_key=public_key, private_key=private_key, sso_domain=sso_domain)
+def init(
+    loop,
+    symmetric_key: str,
+    public_key: str,
+    private_key: str,
+    service_name: str,
+    sso_domain: AnyHttpUrl,
+):
+    service_settings.init_app(
+        symmetric_key=symmetric_key,
+        user_model=AwesomeUser,
+        service_name=service_name,
+        public_key=public_key,
+        private_key=private_key,
+        sso_domain=sso_domain,
+    )
 
 
 def test_root():
@@ -43,27 +54,42 @@ def test_register(register_model: RegisterModel, asymmetric_algorithm):
         invalid_headers = {"Authorization": "Bearer CHLOEISBOSS"}
         response = client.post("/register", headers=invalid_headers)
         assert response.status_code == 401, response.text
-        token = "Bearer %s" % create_token(register_model.dict(), Settings.private_key, asymmetric_algorithm)
+        token = "Bearer %s" % create_token(
+            register_model.dict(), Settings.private_key, asymmetric_algorithm
+        )
         valid_headers = {"Authorization": token}
         response = client.post("/register", headers=valid_headers)
         assert response.status_code == 422, response.text
-        response = client.post("/register", data=register_model.json(), headers=valid_headers)
+        response = client.post(
+            "/register", data=register_model.json(), headers=valid_headers
+        )
         assert response.status_code == 200, response.text
         # test register existed user
-        response = client.post("/register", data=register_model.json(), headers=valid_headers)
+        response = client.post(
+            "/register", data=register_model.json(), headers=valid_headers
+        )
         assert response.status_code == 400, response.text
 
 
-def test_login(register_model: RegisterModel, symmetric_key: str, symmetric_algorithm: str, asymmetric_algorithm):
+def test_login(
+    register_model: RegisterModel,
+    symmetric_key: str,
+    symmetric_algorithm: str,
+    asymmetric_algorithm,
+):
     with client:
         response = client.post("/login")
         assert response.status_code == 403, response.text
         invalid_headers = {"Authorization": "Bearer CHLOEISBOSS"}
         response = client.post("/login", headers=invalid_headers)
         assert response.status_code == 401, response.text
-        token = "Bearer %s" % create_token(register_model.dict(), Settings.private_key, asymmetric_algorithm)
+        token = "Bearer %s" % create_token(
+            register_model.dict(), Settings.private_key, asymmetric_algorithm
+        )
         valid_headers = {"Authorization": token}
-        user_response = client.post("/register", data=register_model.json(), headers=valid_headers)
+        user_response = client.post(
+            "/register", data=register_model.json(), headers=valid_headers
+        )
         assert user_response.status_code == 200, user_response.text
         response = client.post("/login", headers=valid_headers)
         assert response.status_code == 200, response.text
@@ -71,9 +97,13 @@ def test_login(register_model: RegisterModel, symmetric_key: str, symmetric_algo
 
 def test_unregister(register_model: RegisterModel, asymmetric_algorithm):
     with client:
-        token = "Bearer %s" % create_token(register_model.dict(), Settings.private_key, asymmetric_algorithm)
+        token = "Bearer %s" % create_token(
+            register_model.dict(), Settings.private_key, asymmetric_algorithm
+        )
         valid_headers = {"Authorization": token}
-        response = client.post("/register", data=register_model.json(), headers=valid_headers)
+        response = client.post(
+            "/register", data=register_model.json(), headers=valid_headers
+        )
         assert response.status_code == 200, response.text
         response = client.post("/unregister")
         assert response.status_code == 403, response.text
@@ -86,12 +116,19 @@ def test_unregister(register_model: RegisterModel, asymmetric_algorithm):
 
 def test_sso_registration(register_model, asymmetric_algorithm):
     async def override_dependency():
-        return {"sso_user_id": "619b5ecad44afe99430824d3", "email": "mock@mock.com", "name": "test"}
+        return {
+            "sso_user_id": "619b5ecad44afe99430824d3",
+            "email": "mock@mock.com",
+            "name": "test",
+        }
 
     app.dependency_overrides[sso_token_decode] = override_dependency
     with client:
-        token = "Bearer %s" % create_token(register_model.dict(), Settings.private_key, asymmetric_algorithm)
+        token = "Bearer %s" % create_token(
+            register_model.dict(), Settings.private_key, asymmetric_algorithm
+        )
         valid_headers = {"Authorization": token}
-        response = client.post("/register", data=register_model.json(), headers=valid_headers)
+        response = client.post(
+            "/register", data=register_model.json(), headers=valid_headers
+        )
         assert response.status_code == 401, response.text
-

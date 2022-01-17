@@ -130,14 +130,11 @@ class MinioStore:
         self,
         file: UploadFile,
         column_types: dict = {},
-        date_column: Optional[str] = None,
+        date_columns: List[str] = [],
     ) -> Optional[pd.DataFrame]:
         try:
             file_io = StringIO(str(file.file.read(), "utf-8"))
-            if date_column is None:
-                df = pd.read_csv(file_io, dtype=column_types)
-            else:
-                df = pd.read_csv(file_io, dtype=column_types, parse_dates=[date_column])
+            df = pd.read_csv(file_io, dtype=column_types, parse_dates=date_columns)
             file_io.close()
         except Exception as e:
             self.logger.warning(UnprocessableEntity("unable to read csv %s" % str(e)))
@@ -160,7 +157,7 @@ class MinioStore:
         self,
         name: str,
         column_types: dict = {},
-        date_column_list: List[str] = [],
+        date_columns: List[str] = [],
     ) -> Optional[pd.DataFrame]:
         """Gets data of an object and return a dataframe."""
         try:
@@ -169,10 +166,10 @@ class MinioStore:
             self.logger.warning(e)
             return None
 
-        if not date_column_list:
+        if not date_columns:
             df = pd.read_csv(file_obj, dtype=column_types)
         else:
-            df = pd.read_csv(file_obj, parse_dates=date_column_list, dtype=column_types)
+            df = pd.read_csv(file_obj, parse_dates=date_columns, dtype=column_types)
         file_obj.close()
         file_obj.release_conn()
         return df
