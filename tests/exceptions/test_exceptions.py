@@ -1,4 +1,11 @@
-from awesome_sso.exceptions import BadRequest, Unauthorized, NotFound, ResourceGone, UnprocessableEntity, InternalServerError
+from awesome_sso.exceptions import (
+    BadRequest,
+    InternalServerError,
+    NotFound,
+    ResourceGone,
+    Unauthorized,
+    UnprocessableEntity,
+)
 
 
 def test_exception_format():

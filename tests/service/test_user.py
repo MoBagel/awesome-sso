@@ -15,7 +15,7 @@ async def test_user_registration(register_model):
     assert user.name == register_model.name
     assert user.email == register_model.email
     assert user.sso_user_id == register_model.sso_user_id
-    assert 'fantastic' not in user.dict()
+    assert "fantastic" not in user.dict()
 
 
 async def test_child_user(register_model):
@@ -23,7 +23,7 @@ async def test_child_user(register_model):
     assert user.name == register_model.name
     assert user.email == register_model.email
     assert user.sso_user_id == register_model.sso_user_id
-    assert user.dict()['fantastic']
+    assert user.dict()["fantastic"]
 
 
 async def test_child_user_with_extra_param(register_model):

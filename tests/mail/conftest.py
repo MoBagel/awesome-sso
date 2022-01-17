@@ -5,11 +5,13 @@ from awesome_sso.mail.mailgun import MailGun
 
 
 class MailSettings(BaseSettings):
-    BASE_URL: HttpUrl = Field(default="https://api.mailgun.net/v3/somedomain.mailgun.org")
+    BASE_URL: HttpUrl = Field(
+        default="https://api.mailgun.net/v3/somedomain.mailgun.org"
+    )
     API_KEY: str = Field(default="9d8h7324q65rcx7q34jr76txcq9243nd-awx4o9j8-wc9fye8h")
 
     class Config:
-        env_prefix = 'MAIL'
+        env_prefix = "MAIL"
 
 
 @pytest.fixture()

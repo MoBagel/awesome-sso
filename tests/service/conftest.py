@@ -1,5 +1,5 @@
-import string
 import random
+import string
 from typing import List
 
 import pytest
@@ -7,19 +7,27 @@ from beanie import PydanticObjectId
 from pydantic import EmailStr
 
 from awesome_sso.service.depends import JWTPayload
-from awesome_sso.service.user.schema import RegisterModel, ConfigOption, ConfigType, ConfigConstraint
+from awesome_sso.service.user.schema import (
+    ConfigConstraint,
+    ConfigOption,
+    ConfigType,
+    RegisterModel,
+)
 
 
 @pytest.fixture
 def register_model() -> RegisterModel:
-    random_string = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
-    return RegisterModel(name="test_%s" % random_string, email="test%s@test.com" % random_string,
-                         sso_user_id=PydanticObjectId())
+    random_string = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    return RegisterModel(
+        name="test_%s" % random_string,
+        email="test%s@test.com" % random_string,
+        sso_user_id=PydanticObjectId(),
+    )
 
 
 @pytest.fixture
 async def service_name() -> str:
-    return 'awesome'
+    return "awesome"
 
 
 @pytest.fixture
@@ -54,12 +62,12 @@ def config_options() -> List[ConfigOption]:
 
 @pytest.fixture
 def hostname() -> str:
-    return 'localhost'
+    return "localhost"
 
 
 @pytest.fixture
 def email() -> EmailStr:
-    return EmailStr('test@test.com')
+    return EmailStr("test@test.com")
 
 
 @pytest.fixture

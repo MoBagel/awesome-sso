@@ -59,9 +59,9 @@ def test_put_get_and_download_df(minio_store, test_dataframe):
     minio_store.upload_df("test.csv", test_dataframe)
     df = minio_store.get_df("test.csv")
     assert df.shape[0] == 100
-    df = minio_store.get_df("test.csv", date_column_list=["column_4_date"])
+    df = minio_store.get_df("test.csv", date_columns=["column_4_date"])
     assert df.shape[0] == 100
-    df = minio_store.get_df("not_exist.csv", date_column_list=["column_4_date"])
+    df = minio_store.get_df("not_exist.csv", date_columns=["column_4_date"])
     assert df is None
 
     minio_store.download("test.csv", "test.csv")
@@ -100,8 +100,8 @@ async def test_fget_df(minio_store, test_dataframe):
         df = minio_store.fget_df(upload_file)
         assert df.shape[0] == 100
         await upload_file.seek(0)
-        df = minio_store.fget_df(upload_file, date_column="column_4_date")
+        df = minio_store.fget_df(upload_file, date_columns=["column_4_date"])
         assert df.shape[0] == 100
         upload_file = UploadFile("non_exist")
-        df = minio_store.fget_df(upload_file, date_column="column_4_date")
+        df = minio_store.fget_df(upload_file, date_columns=["column_4_date"])
         assert df is None

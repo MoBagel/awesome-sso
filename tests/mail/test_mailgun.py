@@ -21,6 +21,9 @@ def test_send_template(mailgun: MailGun):
         to=[EmailStr("schwannden@mobagel.com")],
         subject="test title",
         template="test.alert",
-        data={"title": "hello from unit test", "content": "test content from unit test"}
+        data={
+            "title": "hello from unit test",
+            "content": "test content from unit test",
+        },
     )
     resp.close()
