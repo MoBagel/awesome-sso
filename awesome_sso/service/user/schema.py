@@ -34,9 +34,9 @@ class Service(BaseModel):
     name: str
     internal_domain: AnyHttpUrl
     external_domain: AnyHttpUrl
-    user_register_endpoint: str = "/api/sso/register"
-    user_unregister_endpoint: str = "/api/sso/unregister"
-    user_login_endpoint: str = "/api/sso/login"
+    user_register_endpoint: str = "/sso/register"
+    user_unregister_endpoint: str = "/sso/unregister"
+    user_login_endpoint: str = "/sso/login"
     status: ServiceStatus = ServiceStatus.DOWN
     mem_percent: float
     cpu_percent: float
