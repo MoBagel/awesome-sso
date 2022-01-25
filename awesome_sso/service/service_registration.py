@@ -11,7 +11,7 @@ from awesome_sso.util.response_error_check import response_error_check
 
 
 def register_service(
-        internal_domain: str, hostname: str, config_options: List[ConfigOption]
+    internal_domain: str, hostname: str, config_options: List[ConfigOption]
 ):
     internal_domain = internal_domain
     hostname = hostname
@@ -24,9 +24,9 @@ def register_service(
         mem_percent=psutil.virtual_memory().percent,
         cpu_percent=psutil.cpu_percent(),
         config_options=config_options,
-        user_register_endpoint="/sso/register",
-        user_unregister_endpoint="/sso/unregister",
-        user_login_endpoint="/sso/login"
+        user_register_endpoint="/api/sso/register",
+        user_unregister_endpoint="/api/sso/unregister",
+        user_login_endpoint="/api/sso/login",
     )
     registration_url = Settings.sso_domain + "/register"
     try:
@@ -40,7 +40,7 @@ def register_service(
 def unregister_service():
     if os.environ.get("SSO_REGISTER") == "true":
         unregister_url = (
-                Settings.sso_domain + "/unregister?service_name=%s" % Settings.service_name
+            Settings.sso_domain + "/unregister?service_name=%s" % Settings.service_name
         )
         try:
             resp = requests.post(unregister_url, timeout=5)
