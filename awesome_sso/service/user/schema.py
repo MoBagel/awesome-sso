@@ -61,6 +61,7 @@ class AwesomeUser(Document):
     email: EmailStr
     sso_user_id: PydanticObjectId
     settings: Dict[str, Any] = {}
+    line_linked: bool = False
 
     class Collection:
         name = "user"
