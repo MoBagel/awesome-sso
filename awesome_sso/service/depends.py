@@ -6,7 +6,7 @@ from beanie import PydanticObjectId
 from fastapi import Cookie, Depends, Security
 from fastapi.logger import logger
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from awesome_sso.exceptions import BadRequest, NotFound, Unauthorized
 from awesome_sso.service.settings import Settings
@@ -51,7 +51,7 @@ def get_sso_user_id(payload: dict = Depends(sso_token_decode)) -> PydanticObject
     if "sso_user_id" not in payload:
         logger.warning(payload)
         raise BadRequest("sso id not found")
-    return payload["sso_user_id"]
+    return PydanticObjectId(payload["sso_user_id"])
 
 
 async def sso_user(
