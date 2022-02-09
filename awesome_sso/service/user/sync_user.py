@@ -18,7 +18,7 @@ async def sync_user(user: AwesomeUserType):
     sso_user = resp.json()
     user.email = sso_user["email"]
     user.name = sso_user["name"]
-    user.line_linked = sso_user['line_linked']
+    user.line_linked = sso_user["line_linked"]
     services = sso_user["services"]
     services_info = []
     config_values = {}
