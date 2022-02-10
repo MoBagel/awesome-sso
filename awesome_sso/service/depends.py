@@ -6,7 +6,7 @@ from beanie import PydanticObjectId
 from fastapi import Cookie, Depends, Security
 from fastapi.logger import logger
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from awesome_sso.exceptions import BadRequest, NotFound, Unauthorized
 from awesome_sso.service.settings import Settings
@@ -22,7 +22,7 @@ class JWTPayload(BaseModel):
 
 
 async def sso_token_decode(
-    credentials: HTTPAuthorizationCredentials = Security(security),
+        credentials: HTTPAuthorizationCredentials = Security(security),
 ) -> dict:
     try:
         jwt_token = credentials.credentials
@@ -37,7 +37,7 @@ async def sso_token_decode(
 
 
 async def sso_registration(
-    register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
+        register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
 ) -> RegisterModel:
     payload["sso_user_id"] = PydanticObjectId(payload["sso_user_id"])
     if payload != register_model.dict():
@@ -47,16 +47,19 @@ async def sso_registration(
     return RegisterModel(**payload)
 
 
-def sso_user_email(payload: dict = Depends(sso_token_decode)) -> EmailStr:
-    if "email" not in payload:
+def get_sso_user_id(payload: dict = Depends(sso_token_decode)) -> PydanticObjectId:
+    if "sso_user_id" not in payload:
         logger.warning(payload)
-        raise BadRequest("email not found")
-    return payload["email"]
+        raise BadRequest("sso id not found")
+    return PydanticObjectId(payload["sso_user_id"])
 
 
-async def sso_user(user_email: EmailStr = Depends(sso_user_email)) -> AwesomeUserType:
+async def sso_user(
+        user_sso_user_id: PydanticObjectId = Depends(get_sso_user_id),
+) -> AwesomeUserType:
     user = await Settings[AwesomeUserType]().user_model.find_one(
-        Settings[AwesomeUserType]().user_model.email == user_email, fetch_links=True
+        Settings[AwesomeUserType]().user_model.sso_user_id == user_sso_user_id,
+        fetch_links=True,
     )
     if user is None:
         raise NotFound("user not found")
@@ -84,8 +87,9 @@ async def jwt_token_decode(eightpoint: str = Cookie(None)) -> JWTPayload:
     return jwt_payload
 
 
+# get from eightpoint cookies
 def sso_user_id(
-    payload: JWTPayload = Depends(jwt_token_decode),
+        payload: JWTPayload = Depends(jwt_token_decode),
 ) -> PydanticObjectId:
     if payload.sso_user_id is None:
         logger.warning(payload)
@@ -94,7 +98,7 @@ def sso_user_id(
 
 
 async def get_current_user(
-    sso_id: PydanticObjectId = Depends(sso_user_id),
+        sso_id: PydanticObjectId = Depends(sso_user_id),
 ) -> AwesomeUserType:
     user = await Settings[AwesomeUserType]().user_model.find_one(
         Settings[AwesomeUserType]().user_model.sso_user_id == sso_id, fetch_links=True

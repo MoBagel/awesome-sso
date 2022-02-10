@@ -8,7 +8,7 @@ from awesome_sso.service.depends import (
     get_current_user,
     jwt_token_decode,
     sso_user,
-    sso_user_email,
+    get_sso_user_id,
     sso_user_id,
 )
 from awesome_sso.service.settings import Settings
@@ -45,15 +45,15 @@ async def registered_user(register_model: RegisterModel) -> AwesomeUser:
     return user
 
 
-def test_sso_user_email(register_model: RegisterModel):
-    email = sso_user_email(register_model.dict())
-    assert email == register_model.email
+def test_get_sso_user_id(register_model: RegisterModel):
+    sso_id = get_sso_user_id(register_model.dict())
+    assert sso_id == register_model.sso_user_id
     with pytest.raises(BadRequest):
-        sso_user_email({})
+        get_sso_user_id({})
 
 
 async def test_sso_user(registered_user: AwesomeUser, register_model: RegisterModel):
-    test_user = await sso_user(register_model.email)
+    test_user = await sso_user(register_model.sso_user_id)
     assert registered_user.id == test_user.id
 
 

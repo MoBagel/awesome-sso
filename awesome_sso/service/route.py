@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Response
 from fastapi.logger import logger
 
 from awesome_sso.exceptions import BadRequest, HTTPException, InternalServerError
-from awesome_sso.service.depends import sso_registration, sso_user, sso_user_email
+from awesome_sso.service.depends import get_sso_user_id, sso_registration, sso_user
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AccessToken, AwesomeUserType, RegisterModel
 from awesome_sso.util.jwt import SYMMETRIC_ALGORITHM, create_token
@@ -50,9 +50,9 @@ async def login(user: AwesomeUserType = Depends(sso_user)):
 
 
 @router.post("/unregister")
-async def unregister(email: str = Depends(sso_user_email)):
+async def unregister(sso_user_id: str = Depends(get_sso_user_id)):
     user = await Settings[AwesomeUserType]().user_model.find_one(  # type: ignore
-        Settings[AwesomeUserType]().user_model.email == email  # type: ignore
+        Settings[AwesomeUserType]().user_model.sso_user_id == sso_user_id  # type: ignore
     )
     if user is None:
         return Response(status_code=200, content="requested user not exist")
