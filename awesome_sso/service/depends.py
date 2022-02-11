@@ -22,7 +22,7 @@ class JWTPayload(BaseModel):
 
 
 async def sso_token_decode(
-        credentials: HTTPAuthorizationCredentials = Security(security),
+    credentials: HTTPAuthorizationCredentials = Security(security),
 ) -> dict:
     try:
         jwt_token = credentials.credentials
@@ -37,7 +37,7 @@ async def sso_token_decode(
 
 
 async def sso_registration(
-        register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
+    register_model: RegisterModel, payload: dict = Depends(sso_token_decode)
 ) -> RegisterModel:
     payload["sso_user_id"] = PydanticObjectId(payload["sso_user_id"])
     if payload != register_model.dict():
@@ -55,7 +55,7 @@ def get_sso_user_id(payload: dict = Depends(sso_token_decode)) -> PydanticObject
 
 
 async def sso_user(
-        user_sso_user_id: PydanticObjectId = Depends(get_sso_user_id),
+    user_sso_user_id: PydanticObjectId = Depends(get_sso_user_id),
 ) -> AwesomeUserType:
     user = await Settings[AwesomeUserType]().user_model.find_one(
         Settings[AwesomeUserType]().user_model.sso_user_id == user_sso_user_id,
@@ -89,7 +89,7 @@ async def jwt_token_decode(eightpoint: str = Cookie(None)) -> JWTPayload:
 
 # get from eightpoint cookies
 def sso_user_id(
-        payload: JWTPayload = Depends(jwt_token_decode),
+    payload: JWTPayload = Depends(jwt_token_decode),
 ) -> PydanticObjectId:
     if payload.sso_user_id is None:
         logger.warning(payload)
@@ -98,7 +98,7 @@ def sso_user_id(
 
 
 async def get_current_user(
-        sso_id: PydanticObjectId = Depends(sso_user_id),
+    sso_id: PydanticObjectId = Depends(sso_user_id),
 ) -> AwesomeUserType:
     user = await Settings[AwesomeUserType]().user_model.find_one(
         Settings[AwesomeUserType]().user_model.sso_user_id == sso_id, fetch_links=True

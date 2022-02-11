@@ -20,11 +20,11 @@ def create_token(
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(days=15)
-    to_encode.update({"exp": datetime.timestamp(expire)})
+    to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,
         encode_key,
         algorithm=algorithm,
         json_encoder=JSONEncoder,
-    )
+    ).decode("utf-8")
     return encoded_jwt
