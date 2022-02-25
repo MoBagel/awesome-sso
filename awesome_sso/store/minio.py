@@ -27,11 +27,16 @@ class MinioStore:
         access_key: str,
         secret_key: str,
         secure: bool = False,
+        region: Optional[str] = None,
         logger: Optional[Logger] = None,
     ):
         self.bucket = bucket
         self.client = Minio(
-            host, access_key=access_key, secret_key=secret_key, secure=secure
+            host,
+            access_key=access_key,
+            secret_key=secret_key,
+            secure=secure,
+            region=region,
         )
         self.logger = logger if logger is not None else Logger("minio")
         found = self.client.bucket_exists(self.bucket)
