@@ -1,5 +1,5 @@
 [![Stable Version](https://img.shields.io/pypi/v/awesome-sso?label=stable)](https://pypi.org/project/awesome-sso/)
-[![tests](https://github.com/MoBagel/awesome-sso/workflows/ci/badge.svg)](https://github.com/MoBagel/awesome-sso)
+[![tests](https://github.com/MoBagel/awesome-sso/workflows/devekio/badge.svg)](https://github.com/MoBagel/awesome-sso)
 [![Coverage Status](https://coveralls.io/repos/github/MoBagel/awesome-sso/badge.svg?branch=develop)](https://coveralls.io/github/MoBagel/awesome-sso)
 
 # Awesome SSO
