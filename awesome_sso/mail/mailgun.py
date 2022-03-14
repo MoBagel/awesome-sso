@@ -22,7 +22,7 @@ class MailGun:
         to: List[EmailStr],
         subject: str,
         text: str,
-        files: TextIOWrapper = [],
+        files: List[TextIOWrapper] = [],
         cc: List[EmailStr] = [],
         bcc: List[EmailStr] = [],
     ):
