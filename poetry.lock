@@ -125,6 +125,19 @@ python-versions = "*"
 pyflakes = ">=1.1.0"
 
 [[package]]
+name = "awesome-minio"
+version = "1.0.1"
+description = "minio wrapper to perform task like pandas dataframe upload, download"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+
+[package.dependencies]
+minio = ">=7.1.1,<8.0.0"
+pandas = ">=1.4.1,<2.0.0"
+starlette = "0.16.0"
+
+[[package]]
 name = "backports.zoneinfo"
 version = "0.2.1"
 description = "Backport of the standard library zoneinfo module"
@@ -880,7 +893,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "~=3.8"
-content-hash = "7acd9f7d458f170145ff943183d167c479254494a72a312000a6e51396f03b97"
+content-hash = "c55ddba529e1c76a2c9698164171476095079c975896e03c7ca095d0861a9b4c"
 
 [metadata.files]
 aiohttp = [
@@ -987,6 +1000,10 @@ attrs = [
 ]
 autoflake = [
     {file = "autoflake-1.4.tar.gz", hash = "sha256:61a353012cff6ab94ca062823d1fb2f692c4acda51c76ff83a8d77915fba51ea"},
+]
+awesome-minio = [
+    {file = "awesome-minio-1.0.1.tar.gz", hash = "sha256:df95dfc8875f48d453ac03516837d92f599c8c46edad870bb3176756a7d2579c"},
+    {file = "awesome_minio-1.0.1-py3-none-any.whl", hash = "sha256:3d8d4c1832822f71faa1dd4231fd222faf4cc6e53bef5b8e5e40aa0900913169"},
 ]
 "backports.zoneinfo" = [
     {file = "backports.zoneinfo-0.2.1-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:da6013fd84a690242c310d77ddb8441a559e9cb3d3d59ebac9aca1a57b2e18bc"},
