@@ -1,6 +1,5 @@
 import json
-from io import TextIOWrapper
-from typing import List
+from typing import List, TextIO, Tuple
 
 import requests
 from pydantic import EmailStr, HttpUrl
@@ -22,7 +21,7 @@ class MailGun:
         to: List[EmailStr],
         subject: str,
         text: str,
-        files: List[TextIOWrapper] = [],
+        files: List[Tuple[str, TextIO]] = [],
         cc: List[EmailStr] = [],
         bcc: List[EmailStr] = [],
     ):
@@ -48,12 +47,14 @@ class MailGun:
         subject: str,
         template: str,
         data: dict,
+        files: List[Tuple[str, TextIO]] = [],
         cc: List[EmailStr] = [],
         bcc: List[EmailStr] = [],
     ):
         return requests.post(
             self.base_url + "/messages",
             auth=("api", self.api_key),
+            files=files,
             data={
                 "from": "%s <%s>" % (from_name, from_email),
                 "to": to,
