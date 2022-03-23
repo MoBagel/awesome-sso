@@ -1,3 +1,4 @@
+from distutils.util import strtobool
 from enum import Enum
 from typing import Any, Dict, List, Optional, Type, TypeVar
 
@@ -29,6 +30,11 @@ class ConfigValue(BaseModel):
                 self.value = [int(x) for x in value]
             else:
                 self.value = int(value)
+        elif self.type == ConfigType.BOOLEAN:
+            if type(value) == str:
+                self.value = bool(strtobool(value))
+            else:
+                self.value = bool(value)
         else:
             self.value = value
 
