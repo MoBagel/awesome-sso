@@ -8,6 +8,7 @@ from pydantic import AnyHttpUrl, BaseModel, EmailStr
 class ConfigType(str, Enum):
     STRING = "str"
     INT = "int"
+    BOOLEAN = "bool"
 
 
 class ConfigConstraint(BaseModel):
