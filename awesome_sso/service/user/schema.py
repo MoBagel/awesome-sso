@@ -17,12 +17,39 @@ class ConfigConstraint(BaseModel):
     options: Optional[List[str]] = None
 
 
+class ConfigValue(BaseModel):
+    name: str
+    description: str
+    type: ConfigType
+    value: Any
+
+    def set_value(self, value):
+        if self.type == ConfigType.INT:
+            if type(value) == list:
+                self.value = [int(x) for x in value]
+            else:
+                self.value = int(value)
+        else:
+            self.value = value
+
+
 class ConfigOption(BaseModel):
     name: str
     description: str
     type: ConfigType
     constraint: ConfigConstraint
     default: Any
+
+    def to_config_value(self, value: Optional[Any] = None) -> ConfigValue:
+        field_value = value if value is not None else self.default
+        config = ConfigValue(
+            name=self.name,
+            description=self.description,
+            type=self.type,
+            value=field_value,
+        )
+        config.set_value(field_value)
+        return config
 
 
 class ServiceStatus(str, Enum):
