@@ -18,6 +18,11 @@ class ConfigConstraint(BaseModel):
     options: Optional[List[str]] = None
 
 
+class UpdateConfigValue(BaseModel):
+    name: str
+    value: Any
+
+
 class ConfigValue(BaseModel):
     name: str
     description: str
