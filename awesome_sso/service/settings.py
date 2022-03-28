@@ -1,6 +1,5 @@
 from typing import Generic, Optional, Type
 
-from fastapi.logger import logger
 from pydantic import AnyHttpUrl, parse_obj_as
 
 from awesome_sso.service.user.schema import AwesomeUserType

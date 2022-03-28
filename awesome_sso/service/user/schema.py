@@ -1,9 +1,14 @@
+from datetime import datetime
 from distutils.util import strtobool
 from enum import Enum
 from typing import Any, Dict, List, Optional, Type, TypeVar
 
+import requests
 from beanie import Document, PydanticObjectId
+from fastapi.logger import logger
 from pydantic import AnyHttpUrl, BaseModel, EmailStr
+
+import awesome_sso.service.settings as awesome_settings
 
 
 class ConfigType(str, Enum):
@@ -56,6 +61,20 @@ class ConfigOption(BaseModel):
         )
         config.set_value(field_value)
         return config
+
+
+class UpdateConfigValue(BaseModel):
+    name: str
+    value: Any
+
+
+class UpdateUserService(BaseModel):
+    service_name: str
+    config_values: List[UpdateConfigValue] = []
+    trial_end_at: Optional[datetime] = None
+
+    class Config:
+        anystr_strip_whitespace = True
 
 
 class ServiceStatus(str, Enum):
@@ -115,3 +134,21 @@ class AwesomeUser(Document):
 
     async def delete_data(self):
         pass
+
+    def update_settings(self, data: UpdateUserService):
+        try:
+            resp = requests.post(
+                awesome_settings.Settings.sso_domain + "/user/service",
+                params={"user_id": str(self.sso_user_id)},
+                data=data.json(),
+                timeout=3,
+            )
+            resp.close()
+
+        except Exception as e:
+            raise InterruptedError(str(e))
+
+        if resp.status_code / 2 == 100:
+            logger.info("sync user pricing plan with sso")
+        else:
+            logger.warning(f"sync user pricing plan with sso failed")
