@@ -74,21 +74,7 @@ class UpdateUserService(BaseModel):
     trial_end_at: Optional[datetime] = None
 
     class Config:
-        anystr_strip_whitespace: True
-        schema_extra = {
-            "example": {
-                "service_name": "restock",
-                "config_values": [
-                    {"name": "available_restock_unit", "value": ["month"]},
-                    {"name": "max_store", "value": 2},
-                    {"name": "max_sku", "value": 10},
-                    {"name": "max_additional_store_columns", "value": 2},
-                    {"name": "max_additional_commodity_columns", "value": 2},
-                    {"name": "max_additional_POS_columns", "value": 2},
-                ],
-                "trial_end_at": "2022-04-01 00:00:00",
-            }
-        }
+        anystr_strip_whitespace = True
 
 
 class ServiceStatus(str, Enum):
