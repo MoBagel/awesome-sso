@@ -1,9 +1,14 @@
+from datetime import datetime
 from distutils.util import strtobool
 from enum import Enum
 from typing import Any, Dict, List, Optional, Type, TypeVar
 
+import requests
 from beanie import Document, PydanticObjectId
+from fastapi.logger import logger
 from pydantic import AnyHttpUrl, BaseModel, EmailStr
+
+import awesome_sso.service.settings as awesome_settings
 
 
 class ConfigType(str, Enum):
@@ -56,6 +61,34 @@ class ConfigOption(BaseModel):
         )
         config.set_value(field_value)
         return config
+
+
+class UpdateConfigValue(BaseModel):
+    name: str
+    value: Any
+
+
+class UpdateUserService(BaseModel):
+    service_name: str
+    config_values: List[UpdateConfigValue] = []
+    trial_end_at: Optional[datetime] = None
+
+    class Config:
+        anystr_strip_whitespace: True
+        schema_extra = {
+            "example": {
+                "service_name": "restock",
+                "config_values": [
+                    {"name": "available_restock_unit", "value": ["month"]},
+                    {"name": "max_store", "value": 2},
+                    {"name": "max_sku", "value": 10},
+                    {"name": "max_additional_store_columns", "value": 2},
+                    {"name": "max_additional_commodity_columns", "value": 2},
+                    {"name": "max_additional_POS_columns", "value": 2},
+                ],
+                "trial_end_at": "2022-04-01 00:00:00",
+            }
+        }
 
 
 class ServiceStatus(str, Enum):
@@ -115,3 +148,21 @@ class AwesomeUser(Document):
 
     async def delete_data(self):
         pass
+
+    def update_settings(self, data: UpdateUserService):
+        try:
+            resp = requests.post(
+                awesome_settings.Settings.sso_domain + "/user/service",
+                params=str(self.id),
+                data=data.json(),
+                timeout=3,
+            )
+            resp.close()
+
+        except Exception as e:
+            raise InterruptedError(str(e))
+
+        if resp.status_code / 2 == 100:
+            logger.info("sync user pricing plan with sso")
+        else:
+            logger.warning(f"sync user pricing plan with sso failed")
