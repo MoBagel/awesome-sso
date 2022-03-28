@@ -153,7 +153,7 @@ class AwesomeUser(Document):
         try:
             resp = requests.post(
                 awesome_settings.Settings.sso_domain + "/user/service",
-                params=str(self.id),
+                params={"user_id": str(self.sso_user_id)},
                 data=data.json(),
                 timeout=3,
             )
