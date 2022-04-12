@@ -1,5 +1,5 @@
 import json
-from typing import List, TextIO, Tuple
+from typing import BinaryIO, List
 
 import requests
 from pydantic import EmailStr, HttpUrl
@@ -21,14 +21,14 @@ class MailGun:
         to: List[EmailStr],
         subject: str,
         text: str,
-        files: List[Tuple[str, TextIO]] = [],
+        attachments: List[BinaryIO] = [],
         cc: List[EmailStr] = [],
         bcc: List[EmailStr] = [],
     ):
         return requests.post(
             self.base_url + "/messages",
             auth=("api", self.api_key),
-            files=files,
+            files=[("attachment", attachment) for attachment in attachments],
             data={
                 "from": "%s <%s>" % (from_name, from_email),
                 "to": to,
@@ -47,14 +47,14 @@ class MailGun:
         subject: str,
         template: str,
         data: dict,
-        files: List[Tuple[str, TextIO]] = [],
+        attachments: List[BinaryIO] = [],
         cc: List[EmailStr] = [],
         bcc: List[EmailStr] = [],
     ):
         return requests.post(
             self.base_url + "/messages",
             auth=("api", self.api_key),
-            files=files,
+            files=[("attachment", attachment) for attachment in attachments],
             data={
                 "from": "%s <%s>" % (from_name, from_email),
                 "to": to,
