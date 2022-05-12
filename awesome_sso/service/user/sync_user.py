@@ -19,6 +19,7 @@ async def sync_user(user: AwesomeUserType):
     user.email = sso_user["email"]
     user.name = sso_user["name"]
     user.line_linked = sso_user["line_linked"]
+    user.language = sso_user["language"]
     services = sso_user["services"]
     services_info = []
     config_values = {}
