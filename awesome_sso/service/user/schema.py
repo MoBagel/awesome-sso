@@ -109,12 +109,18 @@ class RegisterModel(BaseModel):
 AwesomeUserType = TypeVar("AwesomeUserType", bound="AwesomeUser")
 
 
+class Language(str, Enum):
+    EN_US = "en-US"
+    ZH_TW = "zh-TW"
+
+
 class AwesomeUser(Document):
     name: str
     email: EmailStr
     sso_user_id: PydanticObjectId
     settings: Dict[str, Any] = {}
     line_linked: bool = False
+    language: Language = Language.ZH_TW
 
     class Collection:
         name = "user"
