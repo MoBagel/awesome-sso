@@ -120,7 +120,7 @@ class AwesomeUser(Document):
     sso_user_id: PydanticObjectId
     settings: Dict[str, Any] = {}
     line_linked: bool = False
-    language: Language
+    language: Language = Language.ZH_TW
 
     class Collection:
         name = "user"
