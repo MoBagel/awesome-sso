@@ -45,13 +45,14 @@ PyJWT = "^2.3.0"
 pytest = "^6.2"
 pytest-cov = "^3.0.0"
 black = "~=22.1.0"
-flake8 = "^4.0.0"
+flake8 = "^3.9.2"
 isort = "^5.10.1"
 mypy = "^0.910"
 poethepoet = "^0.11.0"
 autoflake = "^1.4"
 coveralls = "^3.3.1"
 pytest-aiohttp = "^0.3.0"
+click = "~=8.0.4"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
