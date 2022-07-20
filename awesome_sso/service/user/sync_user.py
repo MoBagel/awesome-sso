@@ -1,4 +1,5 @@
 import requests
+from awesome_exception.exceptions import InternalServerError
 
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AwesomeUserType
@@ -12,7 +13,7 @@ async def sync_user(user: AwesomeUserType):
     )
     resp.close()
     if resp.status_code / 2 != 100:
-        raise RuntimeError(
+        raise InternalServerError(
             "update vendor info failed: " + str(resp.content.decode("utf-8"))
         )
     sso_user = resp.json()

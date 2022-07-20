@@ -122,7 +122,7 @@ class AwesomeUser(Document):
     line_linked: bool = False
     language: Language = Language.ZH_TW
 
-    class Collection:
+    class Settings:
         name = "user"
 
     @classmethod

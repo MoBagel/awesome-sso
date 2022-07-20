@@ -1,8 +1,7 @@
+from awesome_exception.exceptions import HTTPException
 from fastapi import FastAPI, Request
-from fastapi.logger import logger
 from fastapi.responses import JSONResponse
 
-from awesome_sso.exceptions import HTTPException
 from awesome_sso.service.route import router
 
 

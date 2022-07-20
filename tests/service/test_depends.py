@@ -2,7 +2,7 @@ import pytest
 from beanie import PydanticObjectId
 from pydantic import AnyHttpUrl
 
-from awesome_sso.exceptions import BadRequest, NotFound
+from awesome_exception.exceptions import BadRequest, NotFound
 from awesome_sso.service.depends import (
     JWTPayload,
     get_current_user,
