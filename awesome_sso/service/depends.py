@@ -2,13 +2,13 @@ import os
 from typing import Optional
 
 import jwt
+from awesome_exception.exceptions import BadRequest, NotFound, Unauthorized
 from beanie import PydanticObjectId
 from fastapi import Cookie, Depends, Security
 from fastapi.logger import logger
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 
-from awesome_exception.exceptions import BadRequest, NotFound, Unauthorized
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AwesomeUserType, RegisterModel
 from awesome_sso.util.constant import MOCK_USER_ID

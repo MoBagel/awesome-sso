@@ -114,6 +114,11 @@ class Language(str, Enum):
     ZH_TW = "zh-TW"
 
 
+class UserServiceStatus(str, Enum):
+    ACTIVE = "active"
+    TRIAL_ENDED = "trial_ended"
+
+
 class AwesomeUser(Document):
     name: str
     email: EmailStr

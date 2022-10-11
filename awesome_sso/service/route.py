@@ -1,10 +1,10 @@
 from datetime import timedelta
 
+from awesome_exception.exceptions import BadRequest, HTTPException, InternalServerError
 from beanie import DeleteRules
 from fastapi import APIRouter, Depends, Response
 from fastapi.logger import logger
 
-from awesome_exception.exceptions import BadRequest, HTTPException, InternalServerError
 from awesome_sso.service.depends import get_sso_user_id, sso_registration, sso_user
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AccessToken, AwesomeUserType, RegisterModel

@@ -1,8 +1,8 @@
 import requests
-from awesome_exception.exceptions import InternalServerError
+from awesome_exception.exceptions import InternalServerError, Unauthorized
 
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import AwesomeUserType
+from awesome_sso.service.user.schema import AwesomeUserType, UserServiceStatus
 
 
 async def sync_user(user: AwesomeUserType):
@@ -12,6 +12,8 @@ async def sync_user(user: AwesomeUserType):
         timeout=5,
     )
     resp.close()
+    if resp.status_code == 401:
+        raise Unauthorized(f"user {user.email} is not active")
     if resp.status_code / 2 != 100:
         raise InternalServerError(
             "update vendor info failed: " + str(resp.content.decode("utf-8"))
@@ -29,12 +31,13 @@ async def sync_user(user: AwesomeUserType):
             config_values = {
                 config["name"]: config["value"] for config in service["config_values"]
             }
-            if "status" in service and service["status"] == "trial_ended":
-                config_values["status"] = "trial_ended"
         services_info.append(
             {
                 "service_name": service["service_name"],
                 "external_domain": service["external_domain"],
+                "status": service["status"]
+                if "status" in service
+                else UserServiceStatus.TRIAL_ENDED,
             }
         )
     config_values["services"] = services_info
