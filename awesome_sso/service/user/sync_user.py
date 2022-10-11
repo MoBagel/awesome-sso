@@ -1,5 +1,5 @@
 import requests
-from awesome_exception.exceptions import InternalServerError
+from awesome_exception.exceptions import InternalServerError, Unauthorized
 
 from awesome_sso.service.settings import Settings
 from awesome_sso.service.user.schema import AwesomeUserType
@@ -12,6 +12,8 @@ async def sync_user(user: AwesomeUserType):
         timeout=5,
     )
     resp.close()
+    if resp.status_code == 401:
+        raise Unauthorized(f"user {user.email} is not active")
     if resp.status_code / 2 != 100:
         raise InternalServerError(
             "update vendor info failed: " + str(resp.content.decode("utf-8"))
