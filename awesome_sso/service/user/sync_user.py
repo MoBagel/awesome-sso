@@ -2,7 +2,7 @@ import requests
 from awesome_exception.exceptions import InternalServerError, Unauthorized
 
 from awesome_sso.service.settings import Settings
-from awesome_sso.service.user.schema import AwesomeUserType
+from awesome_sso.service.user.schema import AwesomeUserType, UserServiceStatus
 
 
 async def sync_user(user: AwesomeUserType):
@@ -35,7 +35,9 @@ async def sync_user(user: AwesomeUserType):
             {
                 "service_name": service["service_name"],
                 "external_domain": service["external_domain"],
-                "status": service["status"] if "status" in service else "trial_ended"
+                "status": service["status"]
+                if "status" in service
+                else UserServiceStatus.TRIAL_ENDED,
             }
         )
     config_values["services"] = services_info
