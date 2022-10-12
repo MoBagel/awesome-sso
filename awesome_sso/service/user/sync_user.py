@@ -31,8 +31,8 @@ async def sync_user(user: AwesomeUserType):
             config_values = {
                 config["name"]: config["value"] for config in service["config_values"]
             }
-        if "status" in service:
-            config_values["status"] = service["status"]
+            if "status" in service:
+                config_values["status"] = service["status"]
         services_info.append(
             {
                 "service_name": service["service_name"],
