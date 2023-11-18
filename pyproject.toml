@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "awesome-sso"
-version = "0.5.4"
+version = "0.6.0"
 license = "Apache-2.0"
 readme = "README.md"
 description = "sso general utility for services connected to sso"

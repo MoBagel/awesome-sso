@@ -84,6 +84,6 @@ class MailGun:
                 "subject": subject,
                 "template": template,
                 "h:X-Mailgun-Variables": json.dumps(data),
-                 "o:tag": tags + [Settings.service_name],
+                "o:tag": tags + [Settings.service_name],
             },
         )
